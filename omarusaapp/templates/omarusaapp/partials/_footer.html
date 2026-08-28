@@ -1,0 +1,23 @@
+<!-- Footer -->
+<footer id="footer">
+	<div class="inner">
+		<section>
+			<h2>Get in touch</h2>
+			<form id="contact-form" method="post" action="{% url 'omarusaapp:contact_view' %}">
+				{% csrf_token %}
+				<div class="fields">
+					<div class="field half">
+						<input type="text" name="name" id="name" placeholder="الاسم" required />
+					</div>
+					<div class="field half">
+						<input type="email" name="email" id="email" placeholder="البريد الإلكتروني" required />
+					</div>
+					<div class="field">
+						<textarea name="message" id="message" placeholder="الرسالة" required></textarea>
+					</div>
+				</div>
+				<ul class="actions">
+					<li><input type="submit" value="إرسال" class="primary" /></li>
+				</ul>
+			</form>
+			

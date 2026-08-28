@@ -1,0 +1,47 @@
+<!-- omarusaapp/templates/omarusaapp/index.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <!-- الترحيب -->
+    <header style="margin-bottom: 40px;">
+        <h1>Welcome to Clear Document Preparation LLC</h1>
+        <p style="font-size: 1.2em; line-height: 1.8; color: #555;">
+            At Clear Document Preparation, we provide professional and reliable document services nationwide. 
+            Whether you need immigration assistance, document translation, divorce paperwork, wills and living trusts, 
+            or notary services, we are here to make the process smooth and hassle-free. 
+            Our services are available online and in person, ensuring accessibility wherever you are in the U.S.
+        </p>
+    </header>
+
+    <!-- عرض الخدمات -->
+    <section class="tiles">
+        {% for service in services %}
+            {% if service.slug %}
+                <article class="style{{ forloop.counter|add:0 }}">
+                    <span class="image">
+                        {% if service.thumbnail and service.thumbnail.url %}
+                            <img src="{{ service.thumbnail.url }}" alt="{{ service.name }}" />
+                        {% else %}
+                            <div class="no-image">
+                                📷 {{ service.name }}
+                            </div>
+                        {% endif %}
+                    </span>
+                    <a href="{% url 'omarusaapp:service_detail' slug=service.slug %}">
+                        <h2>{{ service.name }}</h2>
+                        <div class="content">
+                            <p>{{ service.short_description|default:"خدمة متاحة" }}</p>
+                        </div>
+                    </a>
+                </article>
+            {% endif %}
+        {% empty %}
+            <div style="text-align:center; padding:50px 0; width:100%;">
+                <h3 style="color:#666;">🚫 لا توجد خدمات متاحة حالياً</h3>
+                <p style="color:#999;">يرجى إضافة خدمات من لوحة الإدارة</p>
+                <a href="/admin/" class="button primary" style="margin-top:20px;">🔧 إذهب إلى لوحة الإدارة</a>
+            </div>
+        {% endfor %}
+    </section>
+{% endblock %}

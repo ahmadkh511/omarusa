@@ -1,0 +1,100 @@
+# omarusaapp/models.py
+
+from django.db import models
+from django.utils.text import slugify
+from parler.models import TranslatableModel, TranslatedFields
+
+class Service(TranslatableModel):
+    """
+    نموذج الخدمات - قابل للترجمة
+    """
+    # حقول مشتركة
+    thumbnail = models.ImageField(
+        upload_to='services/thumbnails/',
+        verbose_name='الصورة المصغرة',
+        blank=True,
+        null=True
+    )
+    main_image = models.ImageField(
+        upload_to='services/main/',
+        verbose_name='الصورة الرئيسية',
+        blank=True,
+        null=True
+    )
+    is_active = models.BooleanField(default=True, verbose_name='مفعل')
+    order = models.IntegerField(default=0, verbose_name='ترتيب العرض')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    # حقول مترجمة - Slug غير مطلوب من المستخدم
+    translations = TranslatedFields(
+        name=models.CharField(max_length=200, verbose_name='اسم الخدمة'),
+        slug=models.SlugField(max_length=200, unique=True, blank=True, null=True),
+        short_description=models.TextField(max_length=500, blank=True, verbose_name='وصف قصير'),
+        full_description=models.TextField(blank=True, verbose_name='وصف كامل'),
+    )
+    
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = 'خدمة'
+        verbose_name_plural = 'الخدمات'
+    
+    def __str__(self):
+        return self.safe_translation_getter('name', 'خدمة')
+    
+    def save(self, *args, **kwargs):
+        # حفظ الكائن أولاً
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        
+        # توليد Slug تلقائياً للغات الموجودة
+        for lang in ['ar', 'en']:
+            if self.has_translation(lang):
+                translation = self.translations.get(language_code=lang)
+                if not translation.slug and translation.name:
+                    base_slug = slugify(translation.name)
+                    unique_slug = base_slug
+                    counter = 1
+                    while Service.objects.filter(
+                        translations__slug=unique_slug,
+                        translations__language_code=lang
+                    ).exclude(id=self.id).exists():
+                        unique_slug = f"{base_slug}-{counter}"
+                        counter += 1
+                    translation.slug = unique_slug
+                    translation.save()
+        
+        super().save(*args, **kwargs)
+
+
+class About(TranslatableModel):
+    image = models.ImageField(upload_to='about/', blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    translations = TranslatedFields(
+        title=models.CharField(max_length=200, verbose_name='العنوان', default='من نحن'),
+        content=models.TextField(blank=True, verbose_name='المحتوى'),
+    )
+    
+    class Meta:
+        verbose_name = 'من نحن'
+        verbose_name_plural = 'من نحن'
+    
+    def __str__(self):
+        return self.safe_translation_getter('title', 'من نحن')
+
+
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=100, verbose_name='الاسم')
+    email = models.EmailField(verbose_name='البريد الإلكتروني')
+    message = models.TextField(verbose_name='الرسالة')
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'رسالة اتصال'
+        verbose_name_plural = 'رسائل الاتصال'
+    
+    def __str__(self):
+        return f'رسالة من {self.name}'
