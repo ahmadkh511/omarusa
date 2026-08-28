@@ -1,0 +1,29 @@
+<!-- omarusaapp/templates/omarusaapp/service_detail.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <section class="service-detail" style="padding: 40px 0;">
+        <header style="margin-bottom: 30px; text-align: center;">
+            <h1>{{ service.name }}</h1>
+        </header>
+
+        {% if service.main_image and service.main_image.url %}
+            <div class="main-image" style="margin-bottom: 30px; text-align: center;">
+                <img src="{{ service.main_image.url }}" alt="{{ service.name }}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+            </div>
+        {% endif %}
+
+        <div class="content" style="line-height: 1.8; font-size: 1.1em; color: #333;">
+            {% if service.full_description %}
+                {{ service.full_description|linebreaks }}
+            {% else %}
+                <p>لا يوجد وصف متاح لهذه الخدمة حالياً.</p>
+            {% endif %}
+        </div>
+        
+        <div style="margin-top: 50px; text-align: center;">
+            <a href="{% url 'omarusaapp:index' %}" class="button primary">العودة إلى الخدمات</a>
+        </div>
+    </section>
+{% endblock %}

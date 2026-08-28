@@ -1,20 +1,20 @@
 # omarusaapp/urls.py
 
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
-app_name = 'omarusaapp'
+app_name = 'omarusaapp' # تأكد أن هذا هو الاسم المستخدم في القوالب
 
 urlpatterns = [
     # الصفحة الرئيسية
     path('', views.index, name='index'),
     
-    # صفحة الخدمة (ديناميكية)
-    path('service/<slug:slug>/', views.service_detail, name='service_detail'),
+    # صفحة الخدمة (استخدمنا re_path لدعم الحروف العربية في الـ slug)
+    re_path(r'^service/(?P<slug>[-\w]+)/$', views.service_detail, name='service_detail'),
     
     # صفحة من نحن
     path('about/', views.about, name='about'),
     
-    # معالجة نموذج الاتصال
+    # صفحة التواصل (تم تعديل الاسم ليطابق القوالب)
     path('contact/', views.contact_view, name='contact_view'),
 ]

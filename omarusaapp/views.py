@@ -18,9 +18,13 @@ def index(request):
 
 def service_detail(request, slug):
     """
-    صفحة الخدمة - تعرض تفاصيل خدمة محددة
+    صفحة الخدمة - تعرض تفاصيل خدمة محددة بناءً على الـ slug
     """
-    service = get_object_or_404(Service, translations__slug=slug, is_active=True)
+    # استخدام طريقة parler الآمنة لجلب الخدمة بناءً على الـ slug
+    service = get_object_or_404(
+        Service.objects.translated(slug=slug), 
+        is_active=True
+    )
     context = {
         'service': service,
     }

@@ -43,8 +43,7 @@ class Service(TranslatableModel):
         return self.safe_translation_getter('name', 'خدمة')
     
     def save(self, *args, **kwargs):
-        # حفظ الكائن أولاً
-        is_new = self.pk is None
+        # حفظ الكائن أولاً للحصول على ID
         super().save(*args, **kwargs)
         
         # توليد Slug تلقائياً للغات الموجودة
@@ -52,7 +51,8 @@ class Service(TranslatableModel):
             if self.has_translation(lang):
                 translation = self.translations.get(language_code=lang)
                 if not translation.slug and translation.name:
-                    base_slug = slugify(translation.name)
+                    # استخدام allow_unicode=True لدعم الحروف العربية في الرابط
+                    base_slug = slugify(translation.name, allow_unicode=True)
                     unique_slug = base_slug
                     counter = 1
                     while Service.objects.filter(
@@ -63,8 +63,7 @@ class Service(TranslatableModel):
                         counter += 1
                     translation.slug = unique_slug
                     translation.save()
-        
-        super().save(*args, **kwargs)
+        # تم إزالة super().save() الثانية لأنها غير ضرورية وتسبب حفظاً مكرراً
 
 
 class About(TranslatableModel):
