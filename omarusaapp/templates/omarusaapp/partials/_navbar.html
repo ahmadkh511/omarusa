@@ -1,0 +1,39 @@
+{% load static %}
+
+<!-- Header -->
+<header id="header">
+    <div class="inner">
+        <!-- Logo -->
+        <a href="{% url 'omarusaapp:index' %}" class="logo">
+            <span class="symbol">
+                {% if site_settings.logo %}
+                    <img src="{{ site_settings.logo.url }}" alt="Logo" />
+                {% else %}
+                    <img src="{% static 'omarusaapp/images/logo.svg' %}" alt="" />
+                {% endif %}
+            </span>
+            <span class="title">{% if site_settings %}{{ site_settings.company_name }}{% else %}Clear Document Preparation LLC{% endif %}</span>
+        </a>
+
+        <!-- Nav -->
+        <nav>
+            <ul>
+                <li><a href="#menu">Menu</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- Menu (القائمة الجانبية) -->
+<nav id="menu">
+    <h2>Menu</h2>
+    <ul>
+        <li><a href="{% url 'omarusaapp:index' %}">Home</a></li>
+        {% for service in menu_services %}
+            {% if service.slug %}
+                <li><a href="{% url 'omarusaapp:service_detail' slug=service.slug %}">{{ service.name }}</a></li>
+            {% endif %}
+        {% endfor %}
+        <li><a href="{% url 'omarusaapp:about' %}">About</a></li>
+    </ul>
+</nav>

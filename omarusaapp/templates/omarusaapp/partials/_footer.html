@@ -1,23 +1,97 @@
 <!-- Footer -->
 <footer id="footer">
-	<div class="inner">
-		<section>
-			<h2>Get in touch</h2>
-			<form id="contact-form" method="post" action="{% url 'omarusaapp:contact_view' %}">
-				{% csrf_token %}
-				<div class="fields">
-					<div class="field half">
-						<input type="text" name="name" id="name" placeholder="الاسم" required />
-					</div>
-					<div class="field half">
-						<input type="email" name="email" id="email" placeholder="البريد الإلكتروني" required />
-					</div>
-					<div class="field">
-						<textarea name="message" id="message" placeholder="الرسالة" required></textarea>
-					</div>
-				</div>
-				<ul class="actions">
-					<li><input type="submit" value="إرسال" class="primary" /></li>
-				</ul>
-			</form>
-			
+    <div class="inner">
+        <section>
+            <h2>Get in touch</h2>
+            
+            <!-- معلومات التواصل -->
+            {% if site_settings %}
+            <div class="contact-info">
+                {% if site_settings.address %}
+                    <p><strong>📍 العنوان:</strong> {{ site_settings.address }}</p>
+                {% endif %}
+                {% if site_settings.phone %}
+                    <p><strong>📞 الهاتف:</strong> <a href="tel:{{ site_settings.phone }}">{{ site_settings.phone }}</a></p>
+                {% endif %}
+                {% if site_settings.email %}
+                    <p><strong>✉️ البريد الإلكتروني:</strong> <a href="mailto:{{ site_settings.email }}">{{ site_settings.email }}</a></p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <form id="contact-form" method="post" action="{% url 'omarusaapp:contact_view' %}">
+                {% csrf_token %}
+                <div class="fields">
+                    <div class="field half">
+                        <input type="text" name="name" id="name" placeholder="الاسم" required />
+                    </div>
+                    <div class="field half">
+                        <input type="email" name="email" id="email" placeholder="البريد الإلكتروني" required />
+                    </div>
+                    <div class="field">
+                        <textarea name="message" id="message" placeholder="الرسالة" required></textarea>
+                    </div>
+                </div>
+                <ul class="actions">
+                    <li><input type="submit" value="إرسال" class="primary" /></li>
+                </ul>
+            </form>
+            
+            <!-- رسالة النجاح -->
+            <div id="success-message" style="display:none; background:#4CAF50; color:white; padding:15px; margin-top:20px; border-radius:5px;">
+                ✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.
+            </div>
+            
+            <script>
+            document.getElementById('contact-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        form.reset();
+                        document.getElementById('success-message').style.display = 'block';
+                        setTimeout(() => {
+                            document.getElementById('success-message').style.display = 'none';
+                        }, 5000);
+                    } else {
+                        alert('حدث خطأ: ' + (data.message || ''));
+                    }
+                })
+                .catch(error => {
+                    alert('حدث خطأ في الاتصال: ' + error);
+                });
+            });
+            </script>
+        </section>
+        
+        <section>
+            <h2>Follow</h2>
+            <ul class="icons">
+                {% if site_settings.twitter_url %}
+                    <li><a href="{{ site_settings.twitter_url }}" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
+                {% endif %}
+                {% if site_settings.facebook_url %}
+                    <li><a href="{{ site_settings.facebook_url }}" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
+                {% endif %}
+                {% if site_settings.instagram_url %}
+                    <li><a href="{{ site_settings.instagram_url }}" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
+                {% endif %}
+            </ul>
+        </section>
+        
+        <ul class="copyright">
+            <li>{% if site_settings %}{{ site_settings.copyright_text }}{% else %}&copy; Clear Document Preparation LLC. All rights reserved{% endif %}</li>
+            <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+        </ul>
+    </div>
+</footer>5555

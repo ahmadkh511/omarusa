@@ -1,11 +1,12 @@
-<!-- omarusaapp/templates/omarusaapp/index.html -->
-{% extends "base.html" %}
+{% extends "omarusaapp/base.html" %}
 {% load static %}
 
 {% block content %}
     <!-- الترحيب -->
     <header style="margin-bottom: 40px;">
-        <h1>{% if site_settings %}{{ site_settings.company_name }}{% else %}Welcome to Clear Document Preparation LLC{% endif %}</h1>
+        <h1>
+            {% if site_settings %}{{ site_settings.company_name }}{% else %}Welcome to Clear Document Preparation LLC{% endif %}
+        </h1>
         <p style="font-size: 1.2em; line-height: 1.8; color: #555;">
             {% if site_settings and site_settings.welcome_text %}
                 {{ site_settings.welcome_text|linebreaks }}
