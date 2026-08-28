@@ -5,12 +5,16 @@
 {% block content %}
     <!-- الترحيب -->
     <header style="margin-bottom: 40px;">
-        <h1>Welcome to Clear Document Preparation LLC</h1>
+        <h1>{% if site_settings %}{{ site_settings.company_name }}{% else %}Welcome to Clear Document Preparation LLC{% endif %}</h1>
         <p style="font-size: 1.2em; line-height: 1.8; color: #555;">
-            At Clear Document Preparation, we provide professional and reliable document services nationwide. 
-            Whether you need immigration assistance, document translation, divorce paperwork, wills and living trusts, 
-            or notary services, we are here to make the process smooth and hassle-free. 
-            Our services are available online and in person, ensuring accessibility wherever you are in the U.S.
+            {% if site_settings and site_settings.welcome_text %}
+                {{ site_settings.welcome_text|linebreaks }}
+            {% else %}
+                At Clear Document Preparation, we provide professional and reliable document services nationwide. 
+                Whether you need immigration assistance, document translation, divorce paperwork, wills and living trusts, 
+                or notary services, we are here to make the process smooth and hassle-free. 
+                Our services are available online and in person, ensuring accessibility wherever you are in the U.S.
+            {% endif %}
         </p>
     </header>
 

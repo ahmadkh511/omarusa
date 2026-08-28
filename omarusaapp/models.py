@@ -43,15 +43,12 @@ class Service(TranslatableModel):
         return self.safe_translation_getter('name', 'خدمة')
     
     def save(self, *args, **kwargs):
-        # حفظ الكائن أولاً للحصول على ID
         super().save(*args, **kwargs)
         
-        # توليد Slug تلقائياً للغات الموجودة
         for lang in ['ar', 'en']:
             if self.has_translation(lang):
                 translation = self.translations.get(language_code=lang)
                 if not translation.slug and translation.name:
-                    # استخدام allow_unicode=True لدعم الحروف العربية في الرابط
                     base_slug = slugify(translation.name, allow_unicode=True)
                     unique_slug = base_slug
                     counter = 1
@@ -63,7 +60,6 @@ class Service(TranslatableModel):
                         counter += 1
                     translation.slug = unique_slug
                     translation.save()
-        # تم إزالة super().save() الثانية لأنها غير ضرورية وتسبب حفظاً مكرراً
 
 
 class About(TranslatableModel):
@@ -97,3 +93,39 @@ class ContactMessage(models.Model):
     
     def __str__(self):
         return f'رسالة من {self.name}'
+
+
+
+
+# في أسفل ملف omarusaapp/models.py
+
+# النموذج الجديد: إعدادات الموقع (الهيدر والفوتر)
+class SiteSetting(TranslatableModel):
+    # حقول الهيدر
+    logo = models.ImageField(upload_to='site/', verbose_name='شعار الشركة', blank=True, null=True)
+    
+    # حقول مشتركة (الفوتر - روابط وتواصل)
+    phone = models.CharField(max_length=20, verbose_name='رقم الهاتف', blank=True, null=True)
+    email = models.EmailField(verbose_name='البريد الإلكتروني', blank=True, null=True)
+    facebook_url = models.URLField(verbose_name='رابط فيسبوك', blank=True, null=True)
+    instagram_url = models.URLField(verbose_name='رابط انستغرام', blank=True, null=True)
+    twitter_url = models.URLField(verbose_name='رابط تويتر', blank=True, null=True)
+    
+    # حقول مترجمة (الهيدر والفوتر)
+    translations = TranslatedFields(
+        company_name=models.CharField(max_length=200, verbose_name='اسم الشركة', default='Clear Document Preparation LLC'),
+        welcome_text=models.TextField(verbose_name='النص الترحيبي (الصفحة الرئيسية)', blank=True, null=True),
+        address=models.TextField(verbose_name='العنوان', blank=True, null=True),
+        copyright_text=models.CharField(
+            max_length=255, 
+            verbose_name='نص حقوق النشر', 
+            default='© Clear Document Preparation LLC. All rights reserved'
+        ),
+    )
+
+    class Meta:
+        verbose_name = 'إعداد الموقع'
+        verbose_name_plural = 'إعدادات الموقع'
+
+    def __str__(self):
+        return 'إعدادات الموقع'

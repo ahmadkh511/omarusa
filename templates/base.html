@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Clear Document Preparation LLC</title>
+    <title>{% if site_settings %}{{ site_settings.company_name }}{% else %}Clear Document Preparation LLC{% endif %}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     {% load static %}
@@ -94,8 +94,27 @@
             font-size: 1.1em;
             color: #333;
         }
+
+        /* 4. تنسيق معلومات التواصل في الفوتر */
+        .contact-info {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            line-height: 2;
+        }
+        .contact-info p {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .contact-info strong {
+            min-width: 120px;
+            display: inline-block;
+        }
         
-        /* 4. تحسين القائمة */
+        /* 5. تحسين القائمة */
         #menu ul li a {
             transition: all 0.3s ease;
         }
@@ -104,7 +123,7 @@
             padding-left: 10px;
         }
         
-        /* 5. أزرار أنيقة */
+        /* 6. أزرار أنيقة */
         .button {
             transition: all 0.3s ease;
         }
@@ -113,7 +132,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         
-        /* 6. تنسيق البطاقات */
+        /* 7. تنسيق البطاقات */
         .tiles article {
             transition: all 0.3s ease;
         }
@@ -122,7 +141,7 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.15);
         }
         
-        /* 7. تحسين نموذج الاتصال */
+        /* 8. تحسين نموذج الاتصال */
         #contact-form input, #contact-form textarea {
             transition: all 0.3s ease;
             border: 2px solid #e0e0e0;
@@ -132,7 +151,7 @@
             box-shadow: 0 0 10px rgba(76, 175, 80, 0.1);
         }
         
-        /* 8. شريط الإشعارات */
+        /* 9. شريط الإشعارات */
         .alert {
             padding: 15px 20px;
             border-radius: 8px;
@@ -150,7 +169,7 @@
             border: 1px solid #bee5eb;
         }
         
-        /* 9. تنسيق العناوين */
+        /* 10. تنسيق العناوين */
         h1, h2, h3 {
             font-weight: 700;
         }
@@ -160,7 +179,7 @@
             color: #2a2a2a;
         }
         
-        /* 10. تنسيق الروابط في القائمة */
+        /* 11. تنسيق الروابط في القائمة */
         #menu ul li a.active {
             color: #4CAF50;
             font-weight: bold;
@@ -176,8 +195,14 @@
             <div class="inner">
                 <!-- Logo -->
                 <a href="{% url 'omarusaapp:index' %}" class="logo">
-                    <span class="symbol"><img src="{% static 'omarusaapp/images/logo.svg' %}" alt="" /></span>
-                    <span class="title">Clear Document Preparation LLC</span>
+                    <span class="symbol">
+                        {% if site_settings.logo %}
+                            <img src="{{ site_settings.logo.url }}" alt="Logo" />
+                        {% else %}
+                            <img src="{% static 'omarusaapp/images/logo.svg' %}" alt="" />
+                        {% endif %}
+                    </span>
+                    <span class="title">{% if site_settings %}{{ site_settings.company_name }}{% else %}Clear Document Preparation LLC{% endif %}</span>
                 </a>
 
                 <!-- Nav -->
@@ -194,7 +219,7 @@
             <h2>Menu</h2>
             <ul>
                 <li><a href="{% url 'omarusaapp:index' %}">Home</a></li>
-                {% for service in services %}
+                {% for service in menu_services %}
                     {% if service.slug %}
                         <li><a href="{% url 'omarusaapp:service_detail' slug=service.slug %}">{{ service.name }}</a></li>
                     {% endif %}
@@ -216,6 +241,22 @@
             <div class="inner">
                 <section>
                     <h2>Get in touch</h2>
+                    
+                    <!-- معلومات التواصل -->
+                    {% if site_settings %}
+                    <div class="contact-info">
+                        {% if site_settings.address %}
+                            <p><strong>📍 العنوان:</strong> {{ site_settings.address }}</p>
+                        {% endif %}
+                        {% if site_settings.phone %}
+                            <p><strong>📞 الهاتف:</strong> <a href="tel:{{ site_settings.phone }}">{{ site_settings.phone }}</a></p>
+                        {% endif %}
+                        {% if site_settings.email %}
+                            <p><strong>✉️ البريد الإلكتروني:</strong> <a href="mailto:{{ site_settings.email }}">{{ site_settings.email }}</a></p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
                     <form id="contact-form" method="post" action="{% url 'omarusaapp:contact_view' %}">
                         {% csrf_token %}
                         <div class="fields">
@@ -274,19 +315,20 @@
                 <section>
                     <h2>Follow</h2>
                     <ul class="icons">
-                        <li><a href="#" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
-                        <li><a href="https://www.facebook.com/share/152JktSVj2/?mibextid=wwXIfr" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
-                        <li><a href="https://www.instagram.com/usciscdp?igsh=MWJmeXRvcmUwNnZhZg%3D%3D&utm_source=qr" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
-                        <li><a href="#" class="icon brands style2 fa-dribbble"><span class="label">Dribbble</span></a></li>
-                        <li><a href="#" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
-                        <li><a href="#" class="icon brands style2 fa-500px"><span class="label">500px</span></a></li>
-                        <li><a href="#" class="icon solid style2 fa-phone"><span class="label">Phone</span></a></li>
-                        <li><a href="#" class="icon solid style2 fa-envelope"><span class="label">Email</span></a></li>
+                        {% if site_settings.twitter_url %}
+                            <li><a href="{{ site_settings.twitter_url }}" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
+                        {% endif %}
+                        {% if site_settings.facebook_url %}
+                            <li><a href="{{ site_settings.facebook_url }}" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
+                        {% endif %}
+                        {% if site_settings.instagram_url %}
+                            <li><a href="{{ site_settings.instagram_url }}" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
+                        {% endif %}
                     </ul>
                 </section>
                 
                 <ul class="copyright">
-                    <li>&copy; Clear Document Preparation LLC. All rights reserved</li>
+                    <li>{% if site_settings %}{{ site_settings.copyright_text }}{% else %}&copy; Clear Document Preparation LLC. All rights reserved{% endif %}</li>
                     <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
                 </ul>
             </div>
@@ -300,4 +342,4 @@
     <script src="{% static 'omarusaapp/js/util.js' %}"></script>
     <script src="{% static 'omarusaapp/js/main.js' %}"></script>
 </body>
-</html>
+</html>*******

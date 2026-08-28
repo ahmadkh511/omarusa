@@ -1,17 +1,16 @@
 # omarusaapp/context_processors.py
 
-from .models import Service
+from .models import Service, SiteSetting
 
-def services_processor(request):
+def global_settings(request):
     """
-    إضافة الخدمات النشطة إلى جميع القوالب
+    يجلب الخدمات المفعلة وإعدادات الموقع (الهيدر والفوتر)
+    ويجعلها متاحة في جميع قوالب الموقع.
     """
-    try:
-        services = Service.objects.filter(is_active=True).order_by('order')
-        return {
-            'services': services,
-        }
-    except Exception:
-        return {
-            'services': [],
-        }
+    # جلب أول سجل من إعدادات الموقع (لأننا نستخدم نمط Singleton)
+    site_settings = SiteSetting.objects.first()
+    
+    return {
+        'menu_services': Service.objects.filter(is_active=True).order_by('order'),
+        'site_settings': site_settings
+    }
