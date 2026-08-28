@@ -1,213 +1,54 @@
-<!-- omarusaapp/templates/base.html -->
+{% load static %}
 <!DOCTYPE HTML>
 <html>
 <head>
     <title>{% if site_settings %}{{ site_settings.company_name }}{% else %}Clear Document Preparation LLC{% endif %}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    {% load static %}
     <link rel="stylesheet" href="{% static 'omarusaapp/css/main.css' %}" />
     <noscript><link rel="stylesheet" href="{% static 'omarusaapp/css/noscript.css' %}" /></noscript>
     <style>
         /* ============================================
            تحسينات التصميم
            ============================================ */
-        
-        /* 1. توحيد حجم الصور في الصفحة الرئيسية */
-        .tiles article .image {
-            height: 250px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f4f4f4;
-            position: relative;
-        }
-        .tiles article .image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        .tiles article:hover .image img {
-            transform: scale(1.05);
-        }
-        .tiles article .image .no-image {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #e8e8e8, #d0d0d0);
-            color: #888;
-            font-size: 1.4em;
-            font-weight: bold;
-        }
-        
-        /* 2. تنسيق صفحة الخدمة */
-        .service-image {
-            width: 100%;
-            max-height: 500px;
-            overflow: hidden;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        .service-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .service-content {
-            line-height: 2;
-            font-size: 1.1em;
-            color: #333;
-        }
-        .service-content h2 {
-            color: #2a2a2a;
-            margin-top: 30px;
-        }
-        .service-content ul, .service-content ol {
-            margin: 20px 0;
-            padding-left: 30px;
-        }
-        .service-content li {
-            margin-bottom: 10px;
-        }
-        
-        /* 3. تنسيق صفحة من نحن */
-        .about-image {
-            width: 100%;
-            max-height: 400px;
-            overflow: hidden;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        .about-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .about-content {
-            line-height: 2;
-            font-size: 1.1em;
-            color: #333;
-        }
-        
-        /* 4. تحسين القائمة */
-        #menu ul li a {
-            transition: all 0.3s ease;
-        }
-        #menu ul li a:hover {
-            color: #4CAF50;
-            padding-left: 10px;
-        }
-        
-        /* 5. أزرار أنيقة */
-        .button {
-            transition: all 0.3s ease;
-        }
-        .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        /* 6. تنسيق البطاقات */
-        .tiles article {
-            transition: all 0.3s ease;
-        }
-        .tiles article:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-        }
-        
-        /* 7. تحسين نموذج الاتصال */
-        #contact-form input, #contact-form textarea {
-            transition: all 0.3s ease;
-            border: 2px solid #e0e0e0;
-        }
-        #contact-form input:focus, #contact-form textarea:focus {
-            border-color: #4CAF50;
-            box-shadow: 0 0 10px rgba(76, 175, 80, 0.1);
-        }
-        
-        /* 8. شريط الإشعارات */
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        /* 9. تنسيق العناوين */
-        h1, h2, h3 {
-            font-weight: 700;
-        }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            color: #2a2a2a;
-        }
-        
-        /* 10. تنسيق الروابط في القائمة */
-        #menu ul li a.active {
-            color: #4CAF50;
-            font-weight: bold;
-        }
+        .tiles article .image { height: 250px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f4f4f4; position: relative; }
+        .tiles article .image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+        .tiles article:hover .image img { transform: scale(1.05); }
+        .tiles article .image .no-image { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #e8e8e8, #d0d0d0); color: #888; font-size: 1.4em; font-weight: bold; }
+        .service-image { width: 100%; max-height: 500px; overflow: hidden; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .service-image img { width: 100%; height: 100%; object-fit: cover; }
+        .service-content { line-height: 2; font-size: 1.1em; color: #333; }
+        .service-content h2 { color: #2a2a2a; margin-top: 30px; }
+        .service-content ul, .service-content ol { margin: 20px 0; padding-left: 30px; }
+        .service-content li { margin-bottom: 10px; }
+        .about-image { width: 100%; max-height: 400px; overflow: hidden; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .about-image img { width: 100%; height: 100%; object-fit: cover; }
+        .about-content { line-height: 2; font-size: 1.1em; color: #333; }
+        .contact-info { margin-bottom: 30px; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; line-height: 2; }
+        .contact-info p { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .contact-info strong { min-width: 120px; display: inline-block; }
+        #menu ul li a { transition: all 0.3s ease; }
+        #menu ul li a:hover { color: #4CAF50; padding-left: 10px; }
+        .button { transition: all 0.3s ease; }
+        .button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .tiles article { transition: all 0.3s ease; }
+        .tiles article:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+        #contact-form input, #contact-form textarea { transition: all 0.3s ease; border: 2px solid #e0e0e0; }
+        #contact-form input:focus, #contact-form textarea:focus { border-color: #4CAF50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.1); }
+        .alert { padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        h1, h2, h3 { font-weight: 700; }
+        h1 { font-size: 2.5em; margin-bottom: 20px; color: #2a2a2a; }
+        #menu ul li a.active { color: #4CAF50; font-weight: bold; }
     </style>
 </head>
 <body class="is-preload">
     <!-- Wrapper -->
     <div id="wrapper">
 
-        <!-- Header -->
-        <header id="header">
-            <div class="inner">
-                <!-- Logo -->
-                <a href="{% url 'omarusaapp:index' %}" class="logo">
-                    <span class="symbol">
-                        {% if site_settings.logo %}
-                            <img src="{{ site_settings.logo.url }}" alt="Logo" />
-                        {% else %}
-                            <img src="{% static 'omarusaapp/images/logo.svg' %}" alt="" />
-                        {% endif %}
-                    </span>
-                    <span class="title">{% if site_settings %}{{ site_settings.company_name }}{% else %}Clear Document Preparation LLC{% endif %}</span>
-                </a>
-
-                <!-- Nav -->
-                <nav>
-                    <ul>
-                        <li><a href="#menu">Menu</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </header>
-
-        <!-- Menu -->
-        <nav id="menu">
-            <h2>Menu</h2>
-            <ul>
-                <li><a href="{% url 'omarusaapp:index' %}">Home</a></li>
-                {% for service in menu_services %}
-                    {% if service.slug %}
-                        <li><a href="{% url 'omarusaapp:service_detail' slug=service.slug %}">{{ service.name }}</a></li>
-                    {% endif %}
-                {% endfor %}
-                <li><a href="{% url 'omarusaapp:about' %}">About</a></li>
-            </ul>
-        </nav>
+        <!-- استدعاء النافبار والقائمة الجانبية -->
+        {% include "omarusaapp/partials/_navbar.html" %}
 
         <!-- Main Content -->
         <div id="main">
@@ -217,94 +58,9 @@
             </div>
         </div>
 
-        <!-- Footer -->
-        <footer id="footer">
-            <div class="inner">
-                <section>
-                    <h2>Get in touch</h2>
-                    <form id="contact-form" method="post" action="{% url 'omarusaapp:contact_view' %}">
-                        {% csrf_token %}
-                        <div class="fields">
-                            <div class="field half">
-                                <input type="text" name="name" id="name" placeholder="الاسم" required />
-                            </div>
-                            <div class="field half">
-                                <input type="email" name="email" id="email" placeholder="البريد الإلكتروني" required />
-                            </div>
-                            <div class="field">
-                                <textarea name="message" id="message" placeholder="الرسالة" required></textarea>
-                            </div>
-                        </div>
-                        <ul class="actions">
-                            <li><input type="submit" value="إرسال" class="primary" /></li>
-                        </ul>
-                    </form>
-                    
-                    <!-- رسالة النجاح -->
-                    <div id="success-message" style="display:none; background:#4CAF50; color:white; padding:15px; margin-top:20px; border-radius:5px;">
-                        ✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.
-                    </div>
-                    
-                    <script>
-                    document.getElementById('contact-form').addEventListener('submit', function(e) {
-                        e.preventDefault();
-                        const form = e.target;
-                        const formData = new FormData(form);
-                        
-                        fetch(form.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                form.reset();
-                                document.getElementById('success-message').style.display = 'block';
-                                setTimeout(() => {
-                                    document.getElementById('success-message').style.display = 'none';
-                                }, 5000);
-                            } else {
-                                alert('حدث خطأ: ' + (data.message || ''));
-                            }
-                        })
-                        .catch(error => {
-                            alert('حدث خطأ في الاتصال: ' + error);
-                        });
-                    });
-                    </script>
-                </section>
-                
-                <section>
-                    <h2>Follow</h2>
-                    <ul class="icons">
-                        {% if site_settings.twitter_url %}
-                            <li><a href="{{ site_settings.twitter_url }}" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
-                        {% endif %}
-                        {% if site_settings.facebook_url %}
-                            <li><a href="{{ site_settings.facebook_url }}" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
-                        {% endif %}
-                        {% if site_settings.instagram_url %}
-                            <li><a href="{{ site_settings.instagram_url }}" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
-                        {% endif %}
-                        
-                        {% if site_settings.phone %}
-                            <li><a href="tel:{{ site_settings.phone }}" class="icon solid style2 fa-phone"><span class="label">Phone</span></a></li>
-                        {% endif %}
-                        {% if site_settings.email %}
-                            <li><a href="mailto:{{ site_settings.email }}" class="icon solid style2 fa-envelope"><span class="label">Email</span></a></li>
-                        {% endif %}
-                    </ul>
-                </section>
-                
-                <ul class="copyright">
-                    <li>{% if site_settings %}{{ site_settings.copyright_text }}{% else %}&copy; Clear Document Preparation LLC. All rights reserved{% endif %}</li>
-                    <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-                </ul>
-            </div>
-        </footer>
+        <!-- استدعاء الفوتر -->
+        {% include "omarusaapp/partials/_footer.html" %}
+
     </div>
 
     <!-- Scripts -->
