@@ -1,225 +1,375 @@
-<!-- Footer -->
-<style>
-    /* تنسيق الحاوية الرئيسية للفوتر */
-    #footer {
-        background: #f7f9fc !important;
-        padding: 25px 30px 15px 30px !important;
-        margin-top: 40px !important;
-        border-top: 1px solid #e1e8ed !important;
-        border-radius: 16px 16px 0 0 !important;
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.02) !important;
-    }
-    
-    /* توزيع المحتوى على عمودين متوازنين لتقليل الارتفاع */
-    #footer > .inner {
-        max-width: 1000px !important; 
-        margin: 0 auto !important;
-        display: grid !important;
-        grid-template-columns: 1fr 1.2fr !important;
-        gap: 40px !important;
-        align-items: start !important;
-    }
+<!-- omarusaapp/templates/base.html -->
+{% load static %}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Clear Document Preparation LLC</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="{% static 'omarusaapp/css/main.css' %}" />
+    <noscript><link rel="stylesheet" href="{% static 'omarusaapp/css/noscript.css' %}" /></noscript>
+    <style>
+        /* تنسيق الصور */
+        .tiles article .image {
+            height: 250px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f4f4f4;
+        }
+        .tiles article .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .service-image {
+            width: 100%;
+            max-height: 500px;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .service-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .about-image {
+            width: 100%;
+            max-height: 400px;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    @media (max-width: 768px) {
-        #footer > .inner { grid-template-columns: 1fr !important; gap: 20px !important; }
-    }
-
-    /* العناوين (تم تصغيرها وتقليل هوامشها) */
-    #footer h2 {
-        font-size: 1.2em !important;
-        color: #1a2a3a !important;
-        margin: 0 0 10px 0 !important;
-        padding-bottom: 5px !important;
-        border-bottom: 2px solid #00b4d8 !important;
-        display: inline-block !important;
-    }
-
-    /* معلومات التواصل (تقليل المسافات) */
-    .contact-info-modern p {
-        margin: 0 0 5px 0 !important;
-        color: #444;
-        font-size: 0.95em;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .contact-info-modern strong { color: #00b4d8; min-width: 130px; }
-    .contact-info-modern a { color: #444; text-decoration: none; transition: color 0.3s; }
-    .contact-info-modern a:hover { color: #00b4d8; }
-
-    /* السوشيال ميديا (تم إزاحة المسافة العلوية لتكون أسفل التواصل مباشرة) */
-    #footer .social-spacing {
-        margin-top: 15px;
-    }
-    #footer .icons {
-        list-style: none; padding: 0; margin: 5px 0 0 0; display: flex; gap: 10px;
-    }
-    #footer .icons a {
-        display: flex; align-items: center; justify-content: center;
-        width: 40px; height: 40px; border-radius: 50%;
-        background: #ffffff; border: 1px solid #e1e8ed;
-        color: #555; text-decoration: none; font-size: 1.1em;
-        transition: all 0.3s ease;
-    }
-    #footer .icons a:hover {
-        background: #00b4d8; color: #fff; border-color: #00b4d8;
-        box-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
-        transform: translateY(-2px);
-    }
-
-    /* تنسيق النموذج (Form) وتقليل الهوامش */
-    #footer input, #footer textarea {
-        background: #ffffff !important;
-        border: 1px solid #d1d9e0 !important;
-        color: #333 !important;
-        border-radius: 8px !important;
-        padding: 10px !important;
-        margin-bottom: 8px !important; /* تباعد قليل جداً بين الحقول */
-        width: 100% !important;
-        transition: all 0.3s ease !important;
-    }
-    #footer input::placeholder, #footer textarea::placeholder { color: #aaa; }
-    #footer input:focus, #footer textarea:focus {
-        border-color: #00b4d8 !important;
-        box-shadow: 0 0 8px rgba(0, 242, 255, 0.15) !important;
-        outline: none !important;
-    }
-    #footer .actions { list-style: none; padding: 0; margin: 0 !important; text-align: right; }
-    #footer .actions .primary {
-        background: #00b4d8 !important;
-        color: #fff !important;
-        font-weight: bold;
-        font-size: 1.1em !important; /* تكبير كلمة إرسال */
-        padding: 10px 40px !important;
-        border: none !important;
-        border-radius: 25px !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-    }
-    #footer .actions .primary:hover {
-        background: #0096ad !important;
-        box-shadow: 0 0 15px rgba(0, 242, 255, 0.4) !important;
-        transform: translateY(-2px) !important;
-    }
-
-    /* حقوق النشر */
-    #footer .copyright {
-        grid-column: 1 / -1; max-width: 1000px; margin: 10px auto 0 auto;
-        padding-top: 10px; border-top: 1px solid #e1e8ed;
-        text-align: center; font-size: 0.85em; color: #888;
-        list-style: none; display: flex; justify-content: center; gap: 15px;
-    }
-    #footer .copyright a { color: #00b4d8; text-decoration: none; }
-
-    /* رسالة النجاح */
-    #success-message {
-        background: #00b4d8 !important; color: #fff !important; font-weight: bold;
-        padding: 10px !important; margin-top: 8px !important; font-size: 0.9em !important;
-        border-radius: 8px !important; text-align: center !important;
-    }
-</style>
-
-<footer id="footer">
-    <div class="inner">
+        /* ============================================
+           تنسيق الفوتر البسيط (نسخة العمل)
+           ============================================ */
+        #footer {
+            background: #f7f9fc !important;
+            padding: 30px 30px 15px 30px !important;
+            margin-top: 40px !important;
+            border-top: 1px solid #e1e8ed !important;
+        }
         
-        <!-- القسم الأيمن: معلومات التواصل + السوشيال ميديا (تم جمعهم معاً لتوفير المساحة) -->
-        <section>
-            <h2>Get in touch</h2>
-            
-            {% if site_settings %}
-            <div class="contact-info-modern">
-                {% if site_settings.address %}
-                    <p><strong>📍 العنوان:</strong> {{ site_settings.address }}</p>
-                {% endif %}
-                {% if site_settings.phone %}
-                    <p><strong>📞 الهاتف:</strong> <a href="tel:{{ site_settings.phone }}">{{ site_settings.phone }}</a></p>
-                {% endif %}
-                {% if site_settings.email %}
-                    <p><strong>✉️ البريد الإلكتروني:</strong> <a href="mailto:{{ site_settings.email }}">{{ site_settings.email }}</a></p>
-                {% endif %}
-            </div>
-            {% endif %}
+        #footer .inner {
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr !important;
+            gap: 30px !important;
+        }
 
-            <!-- السوشيال ميديا نقلناها هنا لتكون أسفل معلومات التواصل مباشرة -->
-            <div class="social-spacing">
-                <h2>Follow</h2>
-                <ul class="icons">
-                    {% if site_settings.twitter_url %}
-                        <li><a href="{{ site_settings.twitter_url }}" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
-                    {% endif %}
-                    {% if site_settings.facebook_url %}
-                        <li><a href="{{ site_settings.facebook_url }}" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
-                    {% endif %}
-                    {% if site_settings.instagram_url %}
-                        <li><a href="{{ site_settings.instagram_url }}" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
-                    {% endif %}
-                </ul>
+        @media (max-width: 768px) {
+            #footer .inner {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+        }
+
+        #footer h2 {
+            font-size: 1.1em !important;
+            color: #1a2a3a !important;
+            margin: 0 0 15px 0 !important;
+            padding-bottom: 8px !important;
+            border-bottom: 2px solid #00b4d8 !important;
+            display: inline-block !important;
+        }
+
+        #footer p {
+            margin: 5px 0 !important;
+            color: #555 !important;
+            font-size: 0.9em !important;
+            line-height: 1.6 !important;
+        }
+
+        #footer a {
+            color: #555 !important;
+            text-decoration: none !important;
+            transition: color 0.3s !important;
+        }
+        #footer a:hover {
+            color: #00b4d8 !important;
+        }
+
+        /* السوشيال ميديا */
+        #footer .icons {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 10px 0 0 0 !important;
+            display: flex !important;
+            gap: 10px !important;
+        }
+        #footer .icons a {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 50% !important;
+            background: #ffffff !important;
+            border: 1px solid #e1e8ed !important;
+            color: #555 !important;
+            font-size: 1em !important;
+            transition: all 0.3s ease !important;
+        }
+        #footer .icons a:hover {
+            background: #00b4d8 !important;
+            color: #fff !important;
+            border-color: #00b4d8 !important;
+        }
+
+        /* نموذج الاتصال */
+        #footer input,
+        #footer textarea {
+            background: #ffffff !important;
+            border: 1px solid #d1d9e0 !important;
+            border-radius: 6px !important;
+            padding: 8px 12px !important;
+            font-size: 0.85em !important;
+            width: 100% !important;
+            margin-bottom: 8px !important;
+            transition: all 0.3s ease !important;
+        }
+        #footer input:focus,
+        #footer textarea:focus {
+            border-color: #00b4d8 !important;
+            outline: none !important;
+        }
+        #footer .actions {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        #footer .actions .primary {
+            background: #00b4d8 !important;
+            color: #fff !important;
+            font-weight: bold !important;
+            font-size: 0.9em !important;
+            padding: 8px 30px !important;
+            border: none !important;
+            border-radius: 20px !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            width: auto !important;
+        }
+        #footer .actions .primary:hover {
+            background: #0096ad !important;
+        }
+
+        /* رسالة النجاح */
+        #success-message {
+            background: #00b4d8 !important;
+            color: #fff !important;
+            padding: 10px !important;
+            margin-top: 8px !important;
+            border-radius: 6px !important;
+            text-align: center !important;
+            font-size: 0.85em !important;
+        }
+
+        /* حقوق النشر */
+        #footer .copyright {
+            grid-column: 1 / -1;
+            margin: 15px auto 0 auto !important;
+            padding-top: 12px !important;
+            border-top: 1px solid #e1e8ed !important;
+            text-align: center !important;
+            font-size: 0.75em !important;
+            color: #999 !important;
+            list-style: none !important;
+            display: flex !important;
+            justify-content: center !important;
+            gap: 20px !important;
+        }
+        #footer .copyright a {
+            color: #00b4d8 !important;
+        }
+        #footer .copyright a:hover {
+            text-decoration: underline !important;
+        }
+
+        /* تنسيق معلومات التواصل */
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .contact-item .icon {
+            color: #00b4d8;
+            font-size: 1.1em;
+            min-width: 24px;
+        }
+        .contact-item .text {
+            color: #555;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .contact-item .text strong {
+            color: #1a2a3a;
+        }
+        .contact-item .text a {
+            color: #555 !important;
+        }
+        .contact-item .text a:hover {
+            color: #00b4d8 !important;
+        }
+
+        /* ساعات العمل */
+        .hours-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 4px;
+        }
+        .hours-item .day {
+            font-weight: 600;
+            color: #1a2a3a;
+            min-width: 70px;
+        }
+        .hours-item .time {
+            color: #666;
+        }
+    </style>
+</head>
+<body class="is-preload">
+    <div id="wrapper">
+
+        <!-- استدعاء النافبار -->
+        {% include "omarusaapp/partials/_navbar.html" %}
+
+        <!-- Main Content -->
+        <div id="main">
+            <div class="inner">
+                {% block content %}
+                {% endblock %}
             </div>
-        </section>
-        
-        <!-- القسم الأيسر: النموذج (Form) فقط -->
-        <section>
-            <h2>Send a message</h2>
-            <form id="contact-form" method="post" action="{% url 'omarusaapp:contact_view' %}">
-                {% csrf_token %}
-                <div class="fields">
-                    <div class="field half">
+        </div>
+
+        <!-- ==========================================
+             الفوتر البسيط (نسخة العمل)
+             ========================================== -->
+        <footer id="footer">
+            <div class="inner">
+                
+                <!-- القسم الأول: معلومات التواصل -->
+                <section>
+                    <h2>📌 CONTACT INFO</h2>
+                    <div class="contact-item">
+                        <span class="icon">📍</span>
+                        <div class="text">
+                            <strong>Address:</strong><br>
+                            STFUJTFUJHASDFT<br>
+                            JUHSFJDFUJS DTU
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="icon">📞</span>
+                        <div class="text">
+                            <strong>Phone:</strong><br>
+                            <a href="tel:933318181">933318181</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="icon">✉️</span>
+                        <div class="text">
+                            <strong>Email:</strong><br>
+                            <a href="mailto:wcomsy@gmail.com">wcomsy@gmail.com</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- القسم الثاني: السوشيال ميديا وساعات العمل -->
+                <section>
+                    <h2>🔗 FOLLOW US</h2>
+                    <ul class="icons">
+                        <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                        <li><a href="https://www.facebook.com/share/152JktSVj2/?mibextid=wwXIfr" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                        <li><a href="https://www.instagram.com/usciscdp?igsh=MWJmeXRvcmUwNnZhZg%3D%3D&utm_source=qr" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                    </ul>
+                    
+                    
+                </section>
+
+                <!-- القسم الثالث: نموذج الاتصال -->
+                <section>
+                    <h2>✉️ SEND MESSAGE</h2>
+                    <form id="contact-form" method="post" action="{% url 'omarusaapp:contact_view' %}">
+                        {% csrf_token %}
                         <input type="text" name="name" id="name" placeholder="الاسم" required />
-                    </div>
-                    <div class="field half">
                         <input type="email" name="email" id="email" placeholder="البريد الإلكتروني" required />
+                        <textarea name="message" id="message" placeholder="الرسالة" rows="2" required></textarea>
+                        <ul class="actions">
+                            <li><input type="submit" value="إرسال" class="primary" /></li>
+                        </ul>
+                    </form>
+                    <div id="success-message" style="display:none;">
+                        ✅ تم إرسال رسالتك بنجاح!
                     </div>
-                    <div class="field">
-                        <textarea name="message" id="message" placeholder="الرسالة" rows="3" required></textarea>
-                    </div>
-                </div>
-                <ul class="actions">
-                    <li><input type="submit" value="إرسال" class="primary" /></li>
+                </section>
+                
+                <!-- حقوق النشر -->
+                <ul class="copyright">
+                    <li>&copy; Clear Document Preparation LLC. All rights reserved</li>
+                   
                 </ul>
-            </form>
-            
-            <div id="success-message" style="display:none;">
-                ✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.
+                
             </div>
-        </section>
-        
-        <!-- حقوق النشر -->
-        <ul class="copyright">
-            <li>{% if site_settings %}{{ site_settings.copyright_text }}{% else %}&copy; Clear Document Preparation LLC. All rights reserved{% endif %}</li>
-            <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-        </ul>
-        
-    </div>
-</footer>
+        </footer>
 
-<!-- سكربت الـ AJAX (كما هو) -->
-<script>
-document.getElementById('contact-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'omarusaapp/js/jquery.min.js' %}"></script>
+    <script src="{% static 'omarusaapp/js/browser.min.js' %}"></script>
+    <script src="{% static 'omarusaapp/js/breakpoints.min.js' %}"></script>
+    <script src="{% static 'omarusaapp/js/util.js' %}"></script>
+    <script src="{% static 'omarusaapp/js/main.js' %}"></script>
+
+    <!-- سكربت الـ AJAX -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('contact-form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(form);
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        form.reset();
+                        const msg = document.getElementById('success-message');
+                        msg.style.display = 'block';
+                        setTimeout(() => {
+                            msg.style.display = 'none';
+                        }, 4000);
+                    } else {
+                        alert('حدث خطأ: ' + (data.message || ''));
+                    }
+                })
+                .catch(error => {
+                    alert('حدث خطأ في الاتصال: ' + error);
+                });
+            });
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            form.reset();
-            document.getElementById('success-message').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('success-message').style.display = 'none';
-            }, 5000);
-        } else {
-            alert('حدث خطأ: ' + (data.message || ''));
-        }
-    })
-    .catch(error => {
-        alert('حدث خطأ في الاتصال: ' + error);
     });
-});
-</script>
+    </script>
+</body>
+</html>
