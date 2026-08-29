@@ -1,5 +1,82 @@
 {% load static %}
 
+<style>
+    /* استدعاء خط Poppins العصري من جوجل */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap');
+
+    /* إزالة الهامش العلوي الكبير وتقليل المسافة */
+    #header {
+        padding-top: 10px !important; 
+        padding-bottom: 10px !important;
+    }
+    #header .inner {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* تكبير صورة الشعار */
+    #header .logo .symbol img {
+        height: 60px !important; 
+        width: auto !important;
+        object-fit: contain;
+        
+        /* ===== تأثير لمعة البرق (Lightning Glow) ===== */
+        /* الوميض يبدأ بوهج خفيف */
+        filter: drop-shadow(0 0 2px #00f2ff) drop-shadow(0 0 4px #00b4d8);
+        animation: lightning-pulse 2s infinite alternate; 
+        transition: all 0.4s ease;
+    }
+
+    /* عند مرور الماوس، يشتد البرق */
+    #header .logo:hover .symbol img {
+        animation: none; /* إيقاف الحركة العادية */
+        filter: drop-shadow(0 0 8px #00f2ff) drop-shadow(0 0 16px #00b4d8) drop-shadow(0 0 24px #00b4d8);
+    }
+
+    /* حركة البرق المتكررة */
+    @keyframes lightning-pulse {
+        0% { filter: drop-shadow(0 0 2px #00f2ff) drop-shadow(0 0 4px #00b4d8); }
+        50% { filter: drop-shadow(0 0 6px #00f2ff) drop-shadow(0 0 10px #00b4d8); }
+        100% { filter: drop-shadow(0 0 3px #00f2ff) drop-shadow(0 0 6px #00b4d8); }
+    }
+
+    #header .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px; 
+        text-decoration: none;
+    }
+
+    /* ===== نمط اسم الشركة الجديد ===== */
+    #header .logo .title {
+        font-family: 'Poppins', sans-serif !important;
+        font-size: 1.4em !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.5px !important;
+        text-transform: uppercase !important; 
+        
+        background: linear-gradient(to right, #1a2a3a, #00b4d8);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent !important;
+        -webkit-text-fill-color: transparent;
+        
+        transition: all 0.4s ease;
+    }
+
+    #header .logo:hover .title {
+        background: linear-gradient(to right, #00b4d8, #00f2ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent !important;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 8px rgba(0, 242, 255, 0.4); 
+    }
+</style>
+
 <!-- Header -->
 <header id="header" style="display: block !important;">
     <div class="inner">
