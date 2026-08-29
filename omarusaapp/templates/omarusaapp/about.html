@@ -1,113 +1,108 @@
-<!DOCTYPE HTML>
-<!--
-	Phantom by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
+{% extends "omarusaapp/base.html" %}
 {% load static %}
-<html>
-	<head>
-		<title>Generic - Phantom by HTML5 UP</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="{% static 'omarusaapp/css/main.css' %}" />
-		<noscript><link rel="stylesheet" href="{% static 'omarusaapp/css/noscript.css' %}" /></noscript>
-	</head>
-	<body class="is-preload">
-		<!-- Wrapper -->
-			<div id="wrapper">
 
-				<!-- Header -->
-					<header id="header">
-						<div class="inner">
+{% block content %}
+<style>
+    /* تنسيقات صفحة من نحن */
+    .about-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    .about-header h1 {
+        font-size: 2.5em;
+        font-weight: 800;
+        color: #1a2a3a;
+        margin-bottom: 10px;
+    }
+    .about-header h1::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: var(--turquoise);
+        margin: 15px auto 0;
+        box-shadow: 0 0 10px var(--neon);
+    }
 
-							<!-- Logo -->
-								<a href="{% url 'omarusaapp:index' %}" class="logo">
-									<span class="symbol"><img src="{% static 'omarusaapp/images/logo.svg' %}" alt="" /></span><span class="title">Phantom</span>
-								</a>
+    /* حاوية المحتوى (صورة في الأعلى + نص في الأسفل) */
+    .about-container {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.07);
+        margin-bottom: 50px;
+        max-width: 900px; /* تحديد عرض الحاوية لتكون النصوص مريحة للقراءة */
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-							<!-- Nav -->
-								<nav>
-									<ul>
-										<li><a href="#menu">Menu</a></li>
-									</ul>
-								</nav>
+    @media (max-width: 768px) {
+        .about-container {
+            padding: 20px;
+        }
+    }
 
-						</div>
-					</header>
+    .about-image {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        margin-bottom: 40px;
+        max-height: 400px;
+    }
+    .about-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .about-image:hover img {
+        transform: scale(1.05);
+    }
 
-				<!-- Menu -->
-					<nav id="menu">
-						<h2>Menu</h2>
-						<ul>
-							<li><a href="index.html">Home</a></li>
-							<li><a href="{% url 'omarusaapp:imig' %}">Immigration</a></li>
-							<li><a href="{% url 'omarusaapp:notrary' %}"> Notary</a></li>
-							<li><a href="{% url 'omarusaapp:translation' %}"> Translation</a></li>
-							<li><a href="{% url 'omarusaapp:divorce' %}">Divorce</a></li>
-							<li><a href="{% url 'omarusaapp:adoc_authenticationout' %}">Document auth and apostille</a></li>
-							<li><a href="{% url 'omarusaapp:about' %}">about</a></li>
-						</ul>
-					</nav>
+    .about-text {
+        text-align: center; /* محاذاة النص في المنتصف تحت الصورة */
+    }
+    .about-text h2 {
+        color: var(--turquoise);
+        margin-bottom: 20px;
+        font-size: 1.8em;
+        font-weight: 700;
+    }
+    .about-text p {
+        line-height: 2;
+        font-size: 1.1em;
+        color: #444;
+        margin-bottom: 20px;
+    }
+</style>
 
-				<!-- Main -->
-					<div id="main">
-						<div class="inner">
-							<h1>Generic Page</h1>
-							<span class="image main"><img src="{% static 'omarusaapp/images/pic13.jpg' %}" alt="" /></span>
-							
-						</div>
-					</div>
+<!-- عنوان الصفحة -->
+<header class="about-header">
+    <h1>{{ about.title|default:"من نحن" }}</h1>
+</header>
 
-				<!-- Footer -->
-					<footer id="footer">
-						<div class="inner">
-							<section>
-								<h2>Get in touch</h2>
-								<form method="post" action="#">
-									<div class="fields">
-										<div class="field half">
-											<input type="text" name="name" id="name" placeholder="Name" />
-										</div>
-										<div class="field half">
-											<input type="email" name="email" id="email" placeholder="Email" />
-										</div>
-										<div class="field">
-											<textarea name="message" id="message" placeholder="Message"></textarea>
-										</div>
-									</div>
-									<ul class="actions">
-										<li><input type="submit" value="Send" class="primary" /></li>
-									</ul>
-								</form>
-							</section>
-							<section>
-								<h2>Follow</h2>
-								<ul class="icons">
-									<li><a href="#" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
-									<li><a href="#" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
-									<li><a href="#" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
-									<li><a href="#" class="icon brands style2 fa-dribbble"><span class="label">Dribbble</span></a></li>
-									<li><a href="#" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
-									<li><a href="#" class="icon brands style2 fa-500px"><span class="label">500px</span></a></li>
-									<li><a href="#" class="icon solid style2 fa-phone"><span class="label">Phone</span></a></li>
-									<li><a href="#" class="icon solid style2 fa-envelope"><span class="label">Email</span></a></li>
-								</ul>
-							</section>
-							<ul class="copyright">
-								<li>&copy; Untitled. All rights reserved</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-							</ul>
-						</div>
-					</footer>
+<!-- المحتوى الديناميكي -->
+{% if about %}
+<div class="about-container">
+    {% if about.image %}
+    <div class="about-image">
+        <img src="{{ about.image.url }}" alt="{{ about.title }}" />
+    </div>
+    {% endif %}
+    
+    <div class="about-text">
+        <h2>{{ about.title }}</h2>
+        {# linebreaks تحول الأسطر الجديدة في قاعدة البيانات إلى فقرات HTML تلقائياً #}
+        <div>{{ about.content|linebreaks }}</div>
+    </div>
+</div>
+{% else %}
+<div class="about-container">
+    <div class="about-text">
+        <h2>المحتوى قيد التحضير</h2>
+        <p>يرجى إضافة محتوى لصفحة "من نحن" من لوحة التحكم.</p>
+    </div>
+</div>
+{% endif %}
 
-			</div>
-
-		<!-- Scripts -->
-			<script src="{% static 'omarusaapp/js/jquery.min.js' %}"></script>
-			<script src="{% static 'omarusaapp/js/browser.min.js' %}"></script>
-			<script src="{% static 'omarusaapp/js/breakpoints.min.js' %}"></script>
-			<script src="{% static 'omarusaapp/js/util.js' %}"></script>
-			<script src="{% static 'omarusaapp/js/main.js' %}"></script>
-
-	</body>
-</html>
+{% endblock %}
