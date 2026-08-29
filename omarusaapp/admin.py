@@ -9,6 +9,9 @@ class ServiceAdmin(TranslatableAdmin):
     list_display = ('__str__', 'is_active', 'order')
     list_filter = ('is_active',)
     search_fields = ('translations__name',)
+    
+    # إخفاء حقل Slug من نموذج الإضافة والتعديل
+    exclude = ('slug',)
 
 admin.site.register(Service, ServiceAdmin)
 
