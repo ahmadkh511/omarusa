@@ -1,32 +1,30 @@
 <style>
     /* ============================================
-       تنسيق الفوتر المسطح والبسيط (منخفض الارتفاع)
+       تنسيق الفوتر المسطح والديناميكي
        ============================================ */
     #footer {
-
         background: #ffffff !important;
         padding: 20px 30px !important;
-        margin: 40px auto 10px auto !important; /* زيادة المسافة العلوية لفصل الفوتر عن المحتوى */
-        max-width: 1080px;
+        margin: 40px auto 10px auto !important; /* المسافة العلوية للفصل */
+        max-width: 1280px;
         border-radius: 12px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
-        border-top: 3px solid #00b4d8 !important; /* خط فاصل أزرق سماوي بسيط */
+        border-top: 3px solid #00b4d8 !important; /* خط الفاصل الأزرق السماوي */
     }
     
     #footer .inner {
         max-width: 1200px !important;
         margin: 0 auto !important;
         display: grid !important;
-        /* تقسيم الأعمدة لضمان اتساعها ومنع التفاف النصوص */
         grid-template-columns: 1.5fr 1fr 2fr !important; 
-        gap: 20px !important; /* تقليل المسافة بين الأعمدة */
+        gap: 20px !important;
         align-items: start;
     }
 
     @media (max-width: 980px) {
         #footer {
             padding: 20px !important;
-            margin: 15px 10px !important;
+            margin: 20px 10px !important;
         }
         #footer .inner {
             grid-template-columns: 1fr !important;
@@ -34,12 +32,12 @@
         }
     }
 
-    /* العناوين بخط رأسي يشع نيون */
+    /* العناوين */
     #footer h2 {
         font-size: 0.85em !important;
         font-weight: 700 !important;
         color: #1a2a3a !important;
-        margin: 0 0 10px 0 !important; /* تقليل المسافة السفلية */
+        margin: 0 0 15px 0 !important;
         padding-left: 10px !important;
         border-bottom: none !important;
         display: flex !important;
@@ -61,9 +59,9 @@
         box-shadow: 0 0 6px #00f2ff;
     }
 
-    /* تنسيق النصوص والروابط */
+    /* النصوص والروابط */
     #footer p {
-        margin: 0 0 4px 0 !important;
+        margin: 0 0 8px 0 !important;
         color: #555 !important;
         font-size: 0.85em !important;
         line-height: 1.5 !important;
@@ -77,29 +75,22 @@
         color: #00b4d8 !important;
     }
 
-    /* معلومات التواصل */
-    .contact-item {
+    /* معلومات التواصل الديناميكية */
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .contact-info p {
         display: flex;
         align-items: flex-start;
-        gap: 10px;
-        margin-bottom: 6px; /* تقليل المسافة بين العناصر */
+        gap: 8px;
+        margin: 0 !important;
     }
-    .contact-item .icon {
+    .contact-info p strong {
         color: #00b4d8;
-        font-size: 1em;
+        font-size: 1.1em;
         min-width: 20px;
-        margin-top: 2px;
-    }
-    .contact-item .text {
-        color: #555;
-        font-size: 0.85em;
-        line-height: 1.4;
-    }
-    .contact-item .text strong {
-        color: #1a2a3a;
-        display: block;
-        margin-bottom: 1px;
-        font-size: 0.9em;
     }
 
     /* السوشيال ميديا */
@@ -114,8 +105,8 @@
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        width: 34px !important; /* تصغير الأيقونات قليلاً */
-        height: 34px !important;
+        width: 36px !important;
+        height: 36px !important;
         border-radius: 8px !important;
         background: #f4f7f9 !important;
         border: 1px solid transparent !important;
@@ -130,17 +121,17 @@
         box-shadow: 0 4px 10px rgba(0, 180, 216, 0.3);
     }
 
-    /* نموذج الاتصال (مدمج جداً) */
+    /* نموذج الاتصال */
     #footer input,
     #footer textarea {
         background: transparent !important;
         border: none !important;
         border-bottom: 1px solid #e1e8ed !important;
         border-radius: 0 !important;
-        padding: 6px 4px !important; /* تقليل ارتفاع حقول الإدخال */
+        padding: 6px 4px !important;
         font-size: 0.85em !important;
         width: 100% !important;
-        margin-bottom: 8px !important; /* تقليل المسافة بين الحقول */
+        margin-bottom: 12px !important;
         transition: all 0.3s ease !important;
     }
     #footer input:focus,
@@ -163,7 +154,7 @@
         color: #fff !important;
         font-weight: bold !important;
         font-size: 0.85em !important;
-        padding: 8px 25px !important; /* تقليل حجم زر الإرسال */
+        padding: 8px 25px !important;
         border: none !important;
         border-radius: 20px !important;
         cursor: pointer !important;
@@ -192,8 +183,8 @@
     /* حقوق النشر */
     #footer .copyright {
         grid-column: 1 / -1;
-        margin: 12px auto 0 auto !important; /* تقليل المسافة العلوية */
-        padding-top: 10px !important;
+        margin: 15px auto 0 auto !important;
+        padding-top: 12px !important;
         border-top: 1px solid #f0f3f5 !important;
         text-align: center !important;
         font-size: 0.75em !important;
@@ -208,45 +199,41 @@
     }
 </style>
 
-<!-- ==========================================
-     الفوتر المسطح (نسخة العمل)
-     ========================================== -->
+<!-- Footer -->
 <footer id="footer">
     <div class="inner">
         
-        <!-- القسم الأول: معلومات التواصل -->
+        <!-- القسم الأول: معلومات التواصل (ديناميكي) -->
         <section>
-            <h2>CONTACT INFO</h2>
-            <div class="contact-item">
-                <span class="icon">📍</span>
-                <div class="text">
-                    <strong>Address</strong>
-                    STFUJTFUJHASDFT, JUHSFJDFUJS DTU
-                </div>
+            <h2>GET IN TOUCH</h2>
+            {% if site_settings %}
+            <div class="contact-info">
+                {% if site_settings.address %}
+                    <p><strong>📍</strong> <span>{{ site_settings.address }}</span></p>
+                {% endif %}
+                {% if site_settings.phone %}
+                    <p><strong>📞</strong> <a href="tel:{{ site_settings.phone }}">{{ site_settings.phone }}</a></p>
+                {% endif %}
+                {% if site_settings.email %}
+                    <p><strong>✉️</strong> <a href="mailto:{{ site_settings.email }}">{{ site_settings.email }}</a></p>
+                {% endif %}
             </div>
-            <div class="contact-item">
-                <span class="icon">📞</span>
-                <div class="text">
-                    <strong>Phone</strong>
-                    <a href="tel:933318181">933318181</a>
-                </div>
-            </div>
-            <div class="contact-item">
-                <span class="icon">✉️</span>
-                <div class="text">
-                    <strong>Email</strong>
-                    <a href="mailto:wcomsy@gmail.com">wcomsy@gmail.com</a>
-                </div>
-            </div>
+            {% endif %}
         </section>
 
-        <!-- القسم الثاني: السوشيال ميديا -->
+        <!-- القسم الثاني: السوشيال ميديا (ديناميكي) -->
         <section>
-            <h2>FOLLOW US</h2>
+            <h2>FOLLOW</h2>
             <ul class="icons">
-                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-                <li><a href="https://www.facebook.com/share/152JktSVj2/?mibextid=wwXIfr" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-                <li><a href="https://www.instagram.com/usciscdp?igsh=MWJmeXRvcmUwNnZhZg%3D%3D&utm_source=qr" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                {% if site_settings.twitter_url %}
+                    <li><a href="{{ site_settings.twitter_url }}" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                {% endif %}
+                {% if site_settings.facebook_url %}
+                    <li><a href="{{ site_settings.facebook_url }}" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                {% endif %}
+                {% if site_settings.instagram_url %}
+                    <li><a href="{{ site_settings.instagram_url }}" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                {% endif %}
             </ul>
         </section>
 
@@ -255,23 +242,23 @@
             <h2>SEND MESSAGE</h2>
             <form id="contact-form" method="post" action="{% url 'omarusaapp:contact_view' %}">
                 {% csrf_token %}
-                <input type="text" name="name" id="name" placeholder="Name" required />
-                <input type="email" name="email" id="email" placeholder="Email " required />
-                <textarea name="message" id="message" placeholder="Message" rows="1" required></textarea>
+                <input type="text" name="name" id="name" placeholder="الاسم" required />
+                <input type="email" name="email" id="email" placeholder="البريد الإلكتروني" required />
+                <textarea name="message" id="message" placeholder="الرسالة" rows="1" required></textarea>
                 <ul class="actions">
-                    <li><input type="submit" value="Send" class="primary" /></li>
+                    <li><input type="submit" value="إرسال" class="primary" /></li>
                 </ul>
             </form>
             <div id="success-message" style="display:none;">
-                ✅ تم إرسال رسالتك بنجاح!
+                ✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.
             </div>
         </section>
         
-        <!-- حقوق النشر -->
+        <!-- حقوق النشر (ديناميكي) -->
         <ul class="copyright">
-            <li>&copy; Clear Document Preparation LLC. All rights reserved</li>
+            <li>{% if site_settings %}{{ site_settings.copyright_text }}{% else %}&copy; Clear Document Preparation LLC. All rights reserved{% endif %}</li>
+            <li>Design: <a href="https://balanceiqsoft.com">BalanceIQ</a></li>
         </ul>
-        
     </div>
 </footer>
 
@@ -299,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     msg.style.display = 'block';
                     setTimeout(() => {
                         msg.style.display = 'none';
-                    }, 4000);
+                    }, 5000);
                 } else {
                     alert('حدث خطأ: ' + (data.message || ''));
                 }
