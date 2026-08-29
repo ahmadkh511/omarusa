@@ -3,27 +3,183 @@
 {% load static %}
 
 {% block content %}
-    <section class="service-detail" style="padding: 40px 0;">
-        <header style="margin-bottom: 30px; text-align: center;">
-            <h1>{{ service.name }}</h1>
-        </header>
+<style>
+    /* === تنسيقات صفحة تفاصيل الخدمة === */
+    :root {
+        --turquoise: #00b4d8;
+        --neon: #00f2ff;
+    }
 
-        {% if service.main_image and service.main_image.url %}
-            <div class="main-image" style="margin-bottom: 30px; text-align: center;">
-                <img src="{{ service.main_image.url }}" alt="{{ service.name }}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
-            </div>
-        {% endif %}
+    .service-detail-modern {
+        padding: 0 0 40px 0;
+    }
 
-        <div class="content" style="line-height: 1.8; font-size: 1.1em; color: #333;">
-            {% if service.full_description %}
-                {{ service.full_description|linebreaks }}
-            {% else %}
-                <p>لا يوجد وصف متاح لهذه الخدمة حالياً.</p>
-            {% endif %}
-        </div>
+    /* === البانر (مخصص للخدمات) === */
+    .hero-banner {
+        position: relative;
+        width: 100%;
+        height: 250px; /* تم تقليل الارتفاع ليناسب الخدمة */
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 40px;
         
-        <div style="margin-top: 50px; text-align: center;">
-            <a href="{% url 'omarusaapp:index' %}" class="button primary">العودة إلى الخدمات</a>
+        /* نيون خلفي خفيف دائم */
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1), 
+                    0 0 15px rgba(0, 242, 255, 0.2), 
+                    0 0 30px rgba(0, 180, 216, 0.1);
+        
+        transition: box-shadow 0.4s ease, transform 0.4s ease;
+    }
+
+    .hero-banner:hover {
+        transform: translateY(-5px);
+        /* زيادة خفيفة جداً في التوهج عند المرور */
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15), 
+                    0 0 25px rgba(0, 242, 255, 0.4), 
+                    0 0 50px rgba(0, 180, 216, 0.2);
+    }
+
+    .hero-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.85); /* تعتيم خفيف جداً لبروز النص */
+        transition: transform 0.5s ease;
+    }
+
+    .hero-banner:hover img {
+        transform: scale(1.03);
+    }
+
+    /* وضع النص فوق البانر */
+    .banner-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 30px;
+        background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 70%);
+    }
+
+    .banner-overlay h1 {
+        color: white;
+        font-size: 2.2em; /* حجم أصغر للعنوان ليناسب الارتفاع الجديد */
+        font-weight: 800;
+        margin: 0;
+        text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        position: relative;
+        padding-bottom: 12px;
+    }
+
+    .banner-overlay h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 80px;
+        height: 4px;
+        background: var(--turquoise);
+        box-shadow: 0 0 8px var(--neon); /* نيون خفيف تحت العنوان */
+        border-radius: 2px;
+    }
+
+    /* === محتوى النص === */
+    .service-content-modern {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px;
+        line-height: 1.8;
+        font-size: 1.15em;
+        color: #333;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .service-content-modern p {
+        margin-bottom: 20px;
+    }
+    .service-content-modern h2, 
+    .service-content-modern h3 {
+        color: var(--turquoise);
+        margin-top: 30px;
+    }
+
+    /* === زر العودة === */
+    .back-btn-container {
+        text-align: center;
+        margin-top: 50px;
+    }
+    .btn-neon-back {
+        display: inline-block;
+        background: transparent;
+        color: var(--turquoise);
+        border: 2px solid var(--turquoise);
+        padding: 12px 35px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1em;
+        transition: all 0.3s ease;
+    }
+    .btn-neon-back:hover {
+        background: var(--turquoise);
+        color: white;
+        box-shadow: 0 0 15px var(--neon), 0 0 30px var(--turquoise);
+        transform: translateY(-3px);
+    }
+
+    /* تصميم البانر في حال عدم وجود صورة */
+    .no-banner {
+        height: 200px;
+        background: linear-gradient(135deg, #1a1a1a, #333);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--neon);
+        font-size: 4em;
+        border-radius: 12px;
+        margin-bottom: 40px;
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+    }
+</style>
+
+<section class="service-detail-modern">
+    
+    <!-- البانر مع العنوان فوقه -->
+    {% if service.main_image and service.main_image.url %}
+        <div class="hero-banner">
+            <img src="{{ service.main_image.url }}" alt="{{ service.name }}" />
+            <div class="banner-overlay">
+                <h1>{{ service.name }}</h1>
+            </div>
         </div>
-    </section>
+    {% else %}
+        <!-- في حال لم تكن هناك صورة متاحة -->
+        <div class="no-banner">
+            📄
+        </div>
+        <header style="margin-bottom: 30px; text-align: center;">
+            <h1 style="color: #222;">{{ service.name }}</h1>
+        </header>
+    {% endif %}
+
+    <!-- محتوى الخدمة (النص) -->
+    <div class="service-content-modern">
+        {% if service.full_description %}
+            {{ service.full_description|linebreaks }}
+        {% else %}
+            <p style="text-align: center; color: #777;">لا يوجد وصف متاح لهذه الخدمة حالياً.</p>
+        {% endif %}
+    </div>
+    
+    <!-- زر العودة -->
+    <div class="back-btn-container">
+        <a href="{% url 'omarusaapp:index' %}" class="btn-neon-back">← العودة إلى الخدمات</a>
+    </div>
+</section>
 {% endblock %}

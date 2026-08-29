@@ -1,12 +1,133 @@
 <!-- Footer -->
+<style>
+    /* تنسيق الحاوية الرئيسية للفوتر */
+    #footer {
+        background: #f7f9fc !important;
+        padding: 25px 30px 15px 30px !important;
+        margin-top: 40px !important;
+        border-top: 1px solid #e1e8ed !important;
+        border-radius: 16px 16px 0 0 !important;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.02) !important;
+    }
+    
+    /* توزيع المحتوى على عمودين متوازنين لتقليل الارتفاع */
+    #footer > .inner {
+        max-width: 1000px !important; 
+        margin: 0 auto !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1.2fr !important;
+        gap: 40px !important;
+        align-items: start !important;
+    }
+
+    @media (max-width: 768px) {
+        #footer > .inner { grid-template-columns: 1fr !important; gap: 20px !important; }
+    }
+
+    /* العناوين (تم تصغيرها وتقليل هوامشها) */
+    #footer h2 {
+        font-size: 1.2em !important;
+        color: #1a2a3a !important;
+        margin: 0 0 10px 0 !important;
+        padding-bottom: 5px !important;
+        border-bottom: 2px solid #00b4d8 !important;
+        display: inline-block !important;
+    }
+
+    /* معلومات التواصل (تقليل المسافات) */
+    .contact-info-modern p {
+        margin: 0 0 5px 0 !important;
+        color: #444;
+        font-size: 0.95em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .contact-info-modern strong { color: #00b4d8; min-width: 130px; }
+    .contact-info-modern a { color: #444; text-decoration: none; transition: color 0.3s; }
+    .contact-info-modern a:hover { color: #00b4d8; }
+
+    /* السوشيال ميديا (تم إزاحة المسافة العلوية لتكون أسفل التواصل مباشرة) */
+    #footer .social-spacing {
+        margin-top: 15px;
+    }
+    #footer .icons {
+        list-style: none; padding: 0; margin: 5px 0 0 0; display: flex; gap: 10px;
+    }
+    #footer .icons a {
+        display: flex; align-items: center; justify-content: center;
+        width: 40px; height: 40px; border-radius: 50%;
+        background: #ffffff; border: 1px solid #e1e8ed;
+        color: #555; text-decoration: none; font-size: 1.1em;
+        transition: all 0.3s ease;
+    }
+    #footer .icons a:hover {
+        background: #00b4d8; color: #fff; border-color: #00b4d8;
+        box-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
+        transform: translateY(-2px);
+    }
+
+    /* تنسيق النموذج (Form) وتقليل الهوامش */
+    #footer input, #footer textarea {
+        background: #ffffff !important;
+        border: 1px solid #d1d9e0 !important;
+        color: #333 !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+        margin-bottom: 8px !important; /* تباعد قليل جداً بين الحقول */
+        width: 100% !important;
+        transition: all 0.3s ease !important;
+    }
+    #footer input::placeholder, #footer textarea::placeholder { color: #aaa; }
+    #footer input:focus, #footer textarea:focus {
+        border-color: #00b4d8 !important;
+        box-shadow: 0 0 8px rgba(0, 242, 255, 0.15) !important;
+        outline: none !important;
+    }
+    #footer .actions { list-style: none; padding: 0; margin: 0 !important; text-align: right; }
+    #footer .actions .primary {
+        background: #00b4d8 !important;
+        color: #fff !important;
+        font-weight: bold;
+        font-size: 1.1em !important; /* تكبير كلمة إرسال */
+        padding: 10px 40px !important;
+        border: none !important;
+        border-radius: 25px !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+    }
+    #footer .actions .primary:hover {
+        background: #0096ad !important;
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.4) !important;
+        transform: translateY(-2px) !important;
+    }
+
+    /* حقوق النشر */
+    #footer .copyright {
+        grid-column: 1 / -1; max-width: 1000px; margin: 10px auto 0 auto;
+        padding-top: 10px; border-top: 1px solid #e1e8ed;
+        text-align: center; font-size: 0.85em; color: #888;
+        list-style: none; display: flex; justify-content: center; gap: 15px;
+    }
+    #footer .copyright a { color: #00b4d8; text-decoration: none; }
+
+    /* رسالة النجاح */
+    #success-message {
+        background: #00b4d8 !important; color: #fff !important; font-weight: bold;
+        padding: 10px !important; margin-top: 8px !important; font-size: 0.9em !important;
+        border-radius: 8px !important; text-align: center !important;
+    }
+</style>
+
 <footer id="footer">
     <div class="inner">
+        
+        <!-- القسم الأيمن: معلومات التواصل + السوشيال ميديا (تم جمعهم معاً لتوفير المساحة) -->
         <section>
             <h2>Get in touch</h2>
             
-            <!-- معلومات التواصل -->
             {% if site_settings %}
-            <div class="contact-info">
+            <div class="contact-info-modern">
                 {% if site_settings.address %}
                     <p><strong>📍 العنوان:</strong> {{ site_settings.address }}</p>
                 {% endif %}
@@ -19,6 +140,26 @@
             </div>
             {% endif %}
 
+            <!-- السوشيال ميديا نقلناها هنا لتكون أسفل معلومات التواصل مباشرة -->
+            <div class="social-spacing">
+                <h2>Follow</h2>
+                <ul class="icons">
+                    {% if site_settings.twitter_url %}
+                        <li><a href="{{ site_settings.twitter_url }}" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
+                    {% endif %}
+                    {% if site_settings.facebook_url %}
+                        <li><a href="{{ site_settings.facebook_url }}" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
+                    {% endif %}
+                    {% if site_settings.instagram_url %}
+                        <li><a href="{{ site_settings.instagram_url }}" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </section>
+        
+        <!-- القسم الأيسر: النموذج (Form) فقط -->
+        <section>
+            <h2>Send a message</h2>
             <form id="contact-form" method="post" action="{% url 'omarusaapp:contact_view' %}">
                 {% csrf_token %}
                 <div class="fields">
@@ -29,7 +170,7 @@
                         <input type="email" name="email" id="email" placeholder="البريد الإلكتروني" required />
                     </div>
                     <div class="field">
-                        <textarea name="message" id="message" placeholder="الرسالة" required></textarea>
+                        <textarea name="message" id="message" placeholder="الرسالة" rows="3" required></textarea>
                     </div>
                 </div>
                 <ul class="actions">
@@ -37,61 +178,48 @@
                 </ul>
             </form>
             
-            <!-- رسالة النجاح -->
-            <div id="success-message" style="display:none; background:#4CAF50; color:white; padding:15px; margin-top:20px; border-radius:5px;">
+            <div id="success-message" style="display:none;">
                 ✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.
             </div>
-            
-            <script>
-            document.getElementById('contact-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const form = e.target;
-                const formData = new FormData(form);
-                
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        form.reset();
-                        document.getElementById('success-message').style.display = 'block';
-                        setTimeout(() => {
-                            document.getElementById('success-message').style.display = 'none';
-                        }, 5000);
-                    } else {
-                        alert('حدث خطأ: ' + (data.message || ''));
-                    }
-                })
-                .catch(error => {
-                    alert('حدث خطأ في الاتصال: ' + error);
-                });
-            });
-            </script>
         </section>
         
-        <section>
-            <h2>Follow</h2>
-            <ul class="icons">
-                {% if site_settings.twitter_url %}
-                    <li><a href="{{ site_settings.twitter_url }}" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
-                {% endif %}
-                {% if site_settings.facebook_url %}
-                    <li><a href="{{ site_settings.facebook_url }}" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
-                {% endif %}
-                {% if site_settings.instagram_url %}
-                    <li><a href="{{ site_settings.instagram_url }}" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
-                {% endif %}
-            </ul>
-        </section>
-        
+        <!-- حقوق النشر -->
         <ul class="copyright">
             <li>{% if site_settings %}{{ site_settings.copyright_text }}{% else %}&copy; Clear Document Preparation LLC. All rights reserved{% endif %}</li>
             <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
         </ul>
+        
     </div>
-</footer>5555
+</footer>
+
+<!-- سكربت الـ AJAX (كما هو) -->
+<script>
+document.getElementById('contact-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            form.reset();
+            document.getElementById('success-message').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('success-message').style.display = 'none';
+            }, 5000);
+        } else {
+            alert('حدث خطأ: ' + (data.message || ''));
+        }
+    })
+    .catch(error => {
+        alert('حدث خطأ في الاتصال: ' + error);
+    });
+});
+</script>

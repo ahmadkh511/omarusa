@@ -2,51 +2,187 @@
 {% load static %}
 
 {% block content %}
-    <!-- الترحيب -->
-    <header style="margin-bottom: 40px;">
-        <h1>
-            {% if site_settings %}{{ site_settings.company_name }}{% else %}Welcome to Clear Document Preparation LLC{% endif %}
-        </h1>
-        <p style="font-size: 1.2em; line-height: 1.8; color: #555;">
-            {% if site_settings and site_settings.welcome_text %}
-                {{ site_settings.welcome_text|linebreaks }}
-            {% else %}
-                At Clear Document Preparation, we provide professional and reliable document services nationwide. 
-                Whether you need immigration assistance, document translation, divorce paperwork, wills and living trusts, 
-                or notary services, we are here to make the process smooth and hassle-free. 
-                Our services are available online and in person, ensuring accessibility wherever you are in the U.S.
-            {% endif %}
-        </p>
-    </header>
+<style>
+    /* متغيرات النيون والأزرق السماوي */
+    :root {
+        --neon-color: #00f2ff; /* أزرق سماوي فاتح للنيون */
+        --turquoise-deep: #00b4d8; /* أزرق سماوي عميق */
+    }
 
-    <!-- عرض الخدمات -->
-    <section class="tiles">
-        {% for service in services %}
-            {% if service.slug %}
-                <article class="style{{ forloop.counter|add:0 }}">
-                    <span class="image">
-                        {% if service.thumbnail and service.thumbnail.url %}
-                            <img src="{{ service.thumbnail.url }}" alt="{{ service.name }}" />
-                        {% else %}
-                            <div class="no-image">
-                                📷 {{ service.name }}
-                            </div>
-                        {% endif %}
-                    </span>
-                    <a href="{% url 'omarusaapp:service_detail' slug=service.slug %}">
-                        <h2>{{ service.name }}</h2>
-                        <div class="content">
-                            <p>{{ service.short_description|default:"خدمة متاحة" }}</p>
-                        </div>
-                    </a>
-                </article>
-            {% endif %}
-        {% empty %}
-            <div style="text-align:center; padding:50px 0; width:100%;">
-                <h3 style="color:#666;">🚫 لا توجد خدمات متاحة حالياً</h3>
-                <p style="color:#999;">يرجى إضافة خدمات من لوحة الإدارة</p>
-                <a href="/admin/" class="button primary" style="margin-top:20px;">🔧 إذهب إلى لوحة الإدارة</a>
-            </div>
-        {% endfor %}
-    </section>
+    /* الهيدر */
+    .neon-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .neon-header h1 {
+        font-size: 2.2em;
+        font-weight: 800;
+        color: #222;
+        margin-bottom: 10px;
+    }
+    .neon-header h1::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: var(--turquoise-deep);
+        margin: 15px auto 0;
+        box-shadow: 0 0 10px var(--neon-color); /* خط تحت العنوان يشع نيون */
+    }
+    .neon-header p {
+        font-size: 1.1em;
+        line-height: 1.7;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    /* شبكة الصور (4 صور في الصف) */
+    .neon-tiles {
+        display: grid;
+        /* minmax(220px, 1fr) يضمن عرض 4 صور في الشاشات الكبيرة */
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+        gap: 20px;
+        padding-bottom: 40px;
+    }
+
+    /* البطاقة */
+    .neon-card {
+        position: relative;
+        height: 220px; /* حجم أصغر بكثير */
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        background: #000;
+        /* النيون يبدأ مخفي */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        transition: all 0.4s ease;
+        text-decoration: none;
+    }
+
+    /* تأثير النيون عند مرور الماوس */
+    .neon-card:hover {
+        transform: translateY(-8px);
+        /* إضاءة نيون حول البطاقة */
+        box-shadow: 0 0 5px var(--neon-color), 
+                    0 0 20px var(--neon-color), 
+                    0 0 40px var(--turquoise-deep);
+    }
+
+    .neon-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.7; /* الصورة تبدأ مظلمة قليلاً */
+        filter: grayscale(50%);
+        transition: all 0.5s ease;
+    }
+
+    /* عند مرور الماوس: الصورة تضيء بالكامل وتتحرك بخفة */
+    .neon-card:hover img {
+        opacity: 1;
+        filter: grayscale(0%);
+        transform: scale(1.1);
+    }
+
+    /* النص فوق الصورة */
+    .neon-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        color: white;
+        text-align: center;
+        transition: all 0.4s ease;
+    }
+    
+    .neon-card:hover .neon-overlay {
+        background: linear-gradient(to top, rgba(0, 180, 216, 0.8), transparent);
+    }
+
+    .neon-overlay h2 {
+        font-size: 1.1em;
+        margin: 0;
+        font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .neon-overlay p {
+        font-size: 0.85em;
+        opacity: 0;
+        max-height: 0;
+        margin-top: 0;
+        transition: all 0.4s ease;
+    }
+
+    .neon-card:hover .neon-overlay p {
+        opacity: 1;
+        max-height: 40px;
+        margin-top: 5px;
+    }
+
+    /* في حال عدم وجود صورة */
+    .no-image-neon {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #111;
+        color: var(--neon-color);
+        font-size: 3em;
+    }
+
+    /* حالة الفراغ */
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 50px 20px;
+    }
+</style>
+
+<!-- الترحيب -->
+<header class="neon-header">
+    <h1>
+        {% if site_settings %}{{ site_settings.company_name }}{% else %}Welcome to Clear Document Preparation LLC{% endif %}
+    </h1>
+    <p>
+        {% if site_settings and site_settings.welcome_text %}
+            {{ site_settings.welcome_text|linebreaks }}
+        {% else %}
+            At Clear Document Preparation, we provide professional and reliable document services nationwide. 
+            Whether you need immigration assistance, document translation, divorce paperwork, wills and living trusts, 
+            or notary services, we are here to make the process smooth and hassle-free. 
+            Our services are available online and in person, ensuring accessibility wherever you are in the U.S.
+        {% endif %}
+    </p>
+</header>
+
+<!-- عرض الخدمات -->
+<section class="neon-tiles">
+    {% for service in services %}
+        {% if service.slug %}
+            <a href="{% url 'omarusaapp:service_detail' slug=service.slug %}" class="neon-card">
+                {% if service.thumbnail and service.thumbnail.url %}
+                    <img src="{{ service.thumbnail.url }}" alt="{{ service.name }}" />
+                {% else %}
+                    <div class="no-image-neon">📷</div>
+                {% endif %}
+                
+                <div class="neon-overlay">
+                    <h2>{{ service.name }}</h2>
+                    <p>{{ service.short_description|default:"خدمة متاحة" }}</p>
+                </div>
+            </a>
+        {% endif %}
+    {% empty %}
+        <div class="empty-state">
+            <h3>🚫 لا توجد خدمات متاحة حالياً</h3>
+            <p>يرجى إضافة خدمات من لوحة الإدارة</p>
+            <a href="/admin/" class="button primary">🔧 إذهب إلى لوحة الإدارة</a>
+        </div>
+    {% endfor %}
+</section>
 {% endblock %}
