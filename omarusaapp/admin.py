@@ -7,6 +7,10 @@ from .models import Service, About, ContactMessage, SiteSetting
 # تخصيص كيفية ظهور الخدمات في لوحة التحكم
 class ServiceAdmin(TranslatableAdmin):
     list_display = ('__str__', 'is_active', 'order')
+    
+    # السطر التالي يجعل الحقول قابلة للتعديل مباشرة من الجدول
+    list_editable = ('is_active', 'order') 
+    
     list_filter = ('is_active',)
     search_fields = ('translations__name',)
     
