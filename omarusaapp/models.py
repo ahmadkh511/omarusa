@@ -1,5 +1,3 @@
-# omarusaapp/models.py
-
 from django.db import models
 from django.utils.text import slugify
 from parler.models import TranslatableModel, TranslatedFields
@@ -8,7 +6,6 @@ class Service(TranslatableModel):
     """
     نموذج الخدمات - قابل للترجمة
     """
-    # حقول مشتركة
     thumbnail = models.ImageField(
         upload_to='services/thumbnails/',
         verbose_name='الصورة المصغرة',
@@ -26,10 +23,9 @@ class Service(TranslatableModel):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
-    # حقول مترجمة - Slug غير مطلوب من المستخدم
     translations = TranslatedFields(
         name=models.CharField(max_length=200, verbose_name='اسم الخدمة'),
-        slug=models.SlugField(max_length=200, unique=True, blank=True, null=True),
+        slug=models.SlugField(max_length=200, blank=True, null=True),
         short_description=models.TextField(max_length=500, blank=True, verbose_name='وصف قصير'),
         full_description=models.TextField(blank=True, verbose_name='وصف كامل'),
     )
@@ -95,32 +91,31 @@ class ContactMessage(models.Model):
         return f'رسالة من {self.name}'
 
 
-
-
-# في أسفل ملف omarusaapp/models.py
-
-
 class SiteSetting(TranslatableModel):
-    # حقول الهيدر
     logo = models.ImageField(upload_to='site/', verbose_name='شعار الشركة', blank=True, null=True)
-    
-    # حقول مشتركة (الفوتر - روابط وتواصل)
     phone = models.CharField(max_length=20, verbose_name='رقم الهاتف', blank=True, null=True)
     email = models.EmailField(verbose_name='البريد الإلكتروني المعروض بالفوتر', blank=True, null=True)
     facebook_url = models.URLField(verbose_name='رابط فيسبوك', blank=True, null=True)
     instagram_url = models.URLField(verbose_name='رابط انستغرام', blank=True, null=True)
     twitter_url = models.URLField(verbose_name='رابط تويتر', blank=True, null=True)
     
-    # ===== حقول إعدادات البريد الإلكتروني (SMTP) =====
-    email_host = models.CharField(max_length=255, verbose_name='خادم البريد (SMTP Host)', blank=True, null=True, help_text="مثال: mail.yourdomain.com")
-    email_port = models.IntegerField(default=465, verbose_name='بورت البريد (Port)', help_text="غالباً 465 لـ SSL أو 587 لـ TLS")
-    email_use_ssl = models.BooleanField(default=True, verbose_name='استخدام SSL (للبورت 465)')
+    # حقل الواتساب الجديد
+    whatsapp_number = models.CharField(
+        max_length=20, 
+        verbose_name='رقم واتساب (مع رمز الدولة)', 
+        blank=True, 
+        null=True, 
+        help_text="اتركه فارغاً لإخفاء الأيقونة. مثال للصيغة: 193318181"
+    )
+
+    # حقول إعدادات البريد الإلكتروني (SMTP)
+    email_host = models.CharField(max_length=255, verbose_name='خادم البريد (SMTP Host)', blank=True, null=True, help_text="مثال: smtp-relay.brevo.com")
+    email_port = models.IntegerField(default=587, verbose_name='بورت البريد (Port)', help_text="غالباً 465 لـ SSL أو 587 لـ TLS")
+    email_use_ssl = models.BooleanField(default=False, verbose_name='استخدام SSL (للبورت 465)')
     email_host_user = models.CharField(max_length=255, verbose_name='بريد المرسل (Email User)', blank=True, null=True)
     email_host_password = models.CharField(max_length=255, verbose_name='كلمة مرور البريد', blank=True, null=True)
     admin_receive_email = models.EmailField(verbose_name='بريد استقبال الرسائل', blank=True, null=True, help_text="البريد الذي ستصلك إليه رسائل العملاء")
-    # ================================================
 
-    # حقول مترجمة (الهيدر والفوتر)
     translations = TranslatedFields(
         company_name=models.CharField(max_length=200, verbose_name='اسم الشركة', default='Clear Document Preparation LLC'),
         welcome_text=models.TextField(verbose_name='النص الترحيبي (الصفحة الرئيسية)', blank=True, null=True),
@@ -137,4 +132,4 @@ class SiteSetting(TranslatableModel):
         verbose_name_plural = 'إعدادات الموقع'
 
     def __str__(self):
-        return 'إعدادات الموقع'    
+        return 'إعدادات الموقع'
