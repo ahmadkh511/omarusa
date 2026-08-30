@@ -1,9 +1,8 @@
-# omarusaapp/views.py
-
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.utils.translation import gettext as _
-from .models import Service, About, ContactMessage
+from django.core.mail import send_mail, get_connection
+from .models import Service, About, ContactMessage, SiteSetting
 
 def index(request):
     """
@@ -20,7 +19,6 @@ def service_detail(request, slug):
     """
     صفحة الخدمة - تعرض تفاصيل خدمة محددة بناءً على الـ slug
     """
-    # استخدام طريقة parler الآمنة لجلب الخدمة بناءً على الـ slug
     service = get_object_or_404(
         Service.objects.translated(slug=slug), 
         is_active=True
@@ -44,23 +42,75 @@ def about(request):
 
 def contact_view(request):
     """
-    معالجة نموذج الاتصال
+    معالجة نموذج الاتصال وإرسال بريد إلكتروني باستخدام إعدادات قاعدة البيانات
     """
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
         message = request.POST.get('message')
         
+        # 1. حفظ الرسالة في قاعدة البيانات
         ContactMessage.objects.create(
             name=name,
             email=email,
             message=message
         )
         
-        return JsonResponse({
-            'success': True,
-            'message': _('تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.')
-        })
+        # 2. جلب إعدادات البريد من قاعدة البيانات
+        site_settings = SiteSetting.objects.first()
+        
+        if site_settings and site_settings.email_host and site_settings.email_host_user:
+            try:
+                # إنشاء اتصال SMTP مخصص بناءً على إعدادات الموقع
+                connection = get_connection(
+                    host=site_settings.email_host,
+                    port=site_settings.email_port,
+                    username=site_settings.email_host_user,
+                    password=site_settings.email_host_password,
+                    use_ssl=site_settings.email_use_ssl,
+                    use_tls=not site_settings.email_use_ssl, # إذا لم يكن SSL، فاستخدم TLS (مناسب للبورت 587)
+                    fail_silently=False,
+                )
+                
+                subject = f'رسالة جديدة من الموقع: {name}'
+                email_message = f"""
+لقد تلقيت رسالة جديدة من نموذج الاتصال في الموقع:
+
+الاسم: {name}
+البريد الإلكتروني: {email}
+
+نص الرسالة:
+{message}
+                """
+                
+                # البريد المستلم: إذا كان مُدخلاً نستخدمه، وإلا نستخدم بريد المرسل افتراضياً
+                receive_email = site_settings.admin_receive_email or site_settings.email_host_user
+                
+                send_mail(
+                    subject,
+                    email_message,
+                    site_settings.email_host_user,  # البريد المُرسل
+                    [receive_email],                # قائمة المستلمين
+                    fail_silently=False,
+                    connection=connection           # تمرير الاتصال المخصص
+                )
+            except Exception as e:
+                print(f"Email sending failed: {e}")
+                return JsonResponse({
+                    'success': True,
+                    'message': _('تم استلام رسالتك بنجاح! (تعذر إرسال إشعار البريد الإلكتروني مؤقتاً)')
+                })
+            
+            return JsonResponse({
+                'success': True,
+                'message': _('تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.')
+            })
+        else:
+            # إذا لم تكن إعدادات البريد مُدخلة، نحفظ الرسالة فقط دون إرسال إيميل
+            return JsonResponse({
+                'success': True,
+                'message': _('تم استلام رسالتك بنجاح!')
+            })
     
     return JsonResponse({
         'success': False,
