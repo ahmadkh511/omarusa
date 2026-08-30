@@ -116,3 +116,51 @@ def contact_view(request):
         'success': False,
         'message': _('حدث خطأ في الإرسال')
     })
+
+
+
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from django.shortcuts import redirect
+from .models import SiteSetting
+
+# التأكد من أن المستخدم مسؤول (staff)
+def is_staff(user):
+    return user.is_staff
+
+@login_required
+@user_passes_test(is_staff)
+def dashboard(request):
+    # جلب الإعدادات (إن لم تكن موجودة، قم بإنشائها)
+    settings = SiteSetting.objects.first()
+    if not settings:
+        settings = SiteSetting.objects.create()
+
+    if request.method == 'POST':
+        # تحديث الحقول العادية
+        settings.phone = request.POST.get('phone', '')
+        settings.email = request.POST.get('email', '')
+        settings.whatsapp_number = request.POST.get('whatsapp_number', '')
+        settings.admin_receive_email = request.POST.get('admin_receive_email', '')
+        
+        # تحديث إعدادات البريد
+        settings.email_host = request.POST.get('email_host', '')
+        settings.email_port = int(request.POST.get('email_port') or 587)
+        settings.email_use_ssl = request.POST.get('email_use_ssl') == 'on'
+        settings.email_host_user = request.POST.get('email_host_user', '')
+        settings.email_host_password = request.POST.get('email_host_password', '')
+        
+        # تحديث الحقول المترجمة (نفترض اللغة الإنجليزية كأساس للتعديل هنا لتبسيط الأمور)
+        settings.set_current_language('en')
+        settings.company_name = request.POST.get('company_name', '')
+        settings.address = request.POST.get('address', '')
+        
+        settings.save()
+        
+        messages.success(request, 'تم حفظ الإعدادات بنجاح!')
+        return redirect('omarusaapp:dashboard')
+
+    context = {
+        'settings': settings
+    }
+    return render(request, 'omarusaapp/dashboard.html', context)

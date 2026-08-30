@@ -17,4 +17,7 @@ urlpatterns = [
     
     # صفحة التواصل (تم تعديل الاسم ليطابق القوالب)
     path('contact/', views.contact_view, name='contact_view'),
+
+
+    path('dashboard/', views.dashboard, name='dashboard'),
 ]
