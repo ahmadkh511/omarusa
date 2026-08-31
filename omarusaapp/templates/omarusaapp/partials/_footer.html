@@ -5,11 +5,11 @@
     #footer {
         background: #ffffff !important;
         padding: 20px 30px !important;
-        margin: 40px auto 10px auto !important; /* المسافة العلوية للفصل */
+        margin: 40px auto 10px auto !important;
         max-width: 1280px;
         border-radius: 12px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
-        border-top: 3px solid #00b4d8 !important; /* خط الفاصل الأزرق السماوي */
+        border-top: 3px solid #00b4d8 !important;
     }
     
     #footer .inner {
@@ -32,7 +32,6 @@
         }
     }
 
-    /* العناوين */
     #footer h2 {
         font-size: 0.85em !important;
         font-weight: 700 !important;
@@ -45,7 +44,7 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
         position: relative;
-        white-space: nowrap; /* منع نزول النص على سطرين */
+        white-space: nowrap;
     }
     #footer h2::before {
         content: '';
@@ -59,7 +58,6 @@
         box-shadow: 0 0 6px #00f2ff;
     }
 
-    /* النصوص والروابط */
     #footer p {
         margin: 0 0 8px 0 !important;
         color: #555 !important;
@@ -75,7 +73,6 @@
         color: #00b4d8 !important;
     }
 
-    /* معلومات التواصل الديناميكية */
     .contact-info {
         display: flex;
         flex-direction: column;
@@ -93,7 +90,6 @@
         min-width: 20px;
     }
 
-    /* السوشيال ميديا */
     #footer .icons {
         list-style: none !important;
         padding: 0 !important;
@@ -121,7 +117,6 @@
         box-shadow: 0 4px 10px rgba(0, 180, 216, 0.3);
     }
 
-    /* نموذج الاتصال */
     #footer input,
     #footer textarea {
         background: transparent !important;
@@ -167,7 +162,6 @@
         box-shadow: 0 6px 15px rgba(0, 242, 255, 0.4);
     }
 
-    /* رسالة النجاح */
     #success-message {
         background: #f4f7f9 !important;
         color: #00b4d8 !important;
@@ -180,7 +174,6 @@
         font-weight: 600;
     }
 
-    /* حقوق النشر */
     #footer .copyright {
         grid-column: 1 / -1;
         margin: 15px auto 0 auto !important;
@@ -205,7 +198,7 @@
         
         <!-- القسم الأول: معلومات التواصل (ديناميكي) -->
         <section>
-            <h2>GET IN TOUCH</h2>
+            <h2>{{ site_settings.footer_get_in_touch|default:"GET IN TOUCH" }}</h2>
             {% if site_settings %}
             <div class="contact-info">
                 {% if site_settings.address %}
@@ -223,7 +216,7 @@
 
         <!-- القسم الثاني: السوشيال ميديا (ديناميكي) -->
         <section>
-            <h2>FOLLOW</h2>
+            <h2>{{ site_settings.footer_follow|default:"FOLLOW" }}</h2>
             <ul class="icons">
                 {% if site_settings.twitter_url %}
                     <li><a href="{{ site_settings.twitter_url }}" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
@@ -239,18 +232,18 @@
 
         <!-- القسم الثالث: نموذج الاتصال -->
         <section>
-            <h2>SEND MESSAGE</h2>
+            <h2>{{ site_settings.footer_send_message|default:"SEND MESSAGE" }}</h2>
             <form id="contact-form" method="post" action="{% url 'omarusaapp:contact_view' %}">
                 {% csrf_token %}
-                <input type="text" name="name" id="name" placeholder="الاسم" required />
-                <input type="email" name="email" id="email" placeholder="البريد الإلكتروني" required />
-                <textarea name="message" id="message" placeholder="الرسالة" rows="1" required></textarea>
+                <input type="text" name="name" id="name" placeholder="{{ site_settings.footer_name_placeholder|default:'الاسم' }}" required />
+                <input type="email" name="email" id="email" placeholder="{{ site_settings.footer_email_placeholder|default:'البريد الإلكتروني' }}" required />
+                <textarea name="message" id="message" placeholder="{{ site_settings.footer_message_placeholder|default:'الرسالة' }}" rows="1" required></textarea>
                 <ul class="actions">
-                    <li><input type="submit" value="إرسال" class="primary" /></li>
+                    <li><input type="submit" value="{{ site_settings.footer_submit_btn|default:'إرسال' }}" class="primary" /></li>
                 </ul>
             </form>
             <div id="success-message" style="display:none;">
-                ✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.
+                {{ site_settings.footer_success_msg|default:'✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.' }}
             </div>
         </section>
         

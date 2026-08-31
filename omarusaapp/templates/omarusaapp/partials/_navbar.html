@@ -70,7 +70,7 @@
        تصميم القائمة الجانبية (الجديد)
        ============================================ */
     #menu {
-        background: #0f172a !important; /* خلفية كحلي داكن جداً */
+        background: #0f172a !important;
         box-shadow: -10px 0 40px rgba(0,0,0,0.5) !important;
     }
     #menu .inner {
@@ -82,7 +82,7 @@
         font-weight: 700 !important;
         margin-bottom: 30px !important;
         padding-bottom: 15px !important;
-        border-bottom: 2px solid #00b4d8 !important; /* خط توركواز فاصل */
+        border-bottom: 2px solid #00b4d8 !important;
         text-transform: uppercase;
         letter-spacing: 1px;
         box-shadow: 0 4px 10px -5px #00f2ff !important;
@@ -98,7 +98,7 @@
     #menu ul li a {
         display: block !important;
         padding: 12px 20px !important;
-        color: #cbd5e1 !important; /* لون النص الرمادي الفاتح */
+        color: #cbd5e1 !important;
         font-size: 1.1em !important;
         font-weight: 500 !important;
         border-radius: 8px !important;
@@ -107,10 +107,10 @@
         border-left: 3px solid transparent;
     }
     #menu ul li a:hover {
-        background: rgba(0, 180, 216, 0.1) !important; /* خلفية سماوية خفيفة */
-        color: #00f2ff !important; /* نص نيوني */
-        padding-left: 30px !important; /* تأثير الانزياح */
-        border-left: 3px solid #00b4d8 !important; /* شريط جانبي ملون */
+        background: rgba(0, 180, 216, 0.1) !important;
+        color: #00f2ff !important;
+        padding-left: 30px !important;
+        border-left: 3px solid #00b4d8 !important;
         box-shadow: 0 0 15px rgba(0, 242, 255, 0.1) !important;
     }
     
@@ -122,6 +122,44 @@
     #menu .close:hover {
         color: #00f2ff !important;
         text-shadow: 0 0 8px #00b4d8 !important;
+    }
+
+    /* ============================================
+       تنسيق زر تبديل اللغة
+       ============================================ */
+    .language-switcher {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        margin-right: 15px;
+    }
+    .language-switcher a {
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.75em;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        color: #555;
+        border: 1px solid #ddd;
+        background: #f4f7f9;
+        cursor: pointer;
+    }
+    .language-switcher a.active {
+        background: #00b4d8;
+        color: white;
+        border-color: #00b4d8;
+        box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+    }
+    .language-switcher a:hover:not(.active) {
+        background: #e8edf2;
+        border-color: #00b4d8;
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 </style>
 
@@ -140,25 +178,100 @@
             <span class="title">{% if site_settings %}{{ site_settings.company_name }}{% else %}Clear Document Preparation LLC{% endif %}</span>
         </a>
 
-        <!-- Nav -->
-        <nav>
-            <ul>
-                <li><a href="#menu">Menu</a></li>
-            </ul>
-        </nav>
+        <!-- Nav with Language Switcher -->
+        <div class="nav-links">
+            <!-- Language Switcher -->
+            <div class="language-switcher">
+                {% for lang in languages %}
+                    <a href="#" 
+                       class="{% if lang.active %}active{% endif %}" 
+                       data-lang="{{ lang.code }}"
+                       onclick="switchLanguage('{{ lang.code }}'); return false;">
+                        {{ lang.name }}
+                    </a>
+                {% endfor %}
+            </div>
+
+            <!-- Menu Toggle -->
+            <nav>
+                <ul>
+                    <li><a href="#menu">{{ site_settings.menu_title|default:"Menu" }}</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
 </header>
 
 <!-- Menu (القائمة الجانبية) -->
 <nav id="menu">
-    <h2>Menu</h2>
+    <h2>{{ site_settings.menu_title|default:"Menu" }}</h2>
     <ul>
-        <li><a href="{% url 'omarusaapp:index' %}">Home</a></li>
+        <li><a href="{% url 'omarusaapp:index' %}">{{ site_settings.home_link|default:"Home" }}</a></li>
         {% for service in menu_services %}
             {% if service.slug %}
                 <li><a href="{% url 'omarusaapp:service_detail' slug=service.slug %}">{{ service.name }}</a></li>
             {% endif %}
         {% endfor %}
-        <li><a href="{% url 'omarusaapp:about' %}">About</a></li>
+        <li><a href="{% url 'omarusaapp:about' %}">{{ site_settings.about_link|default:"About" }}</a></li>
     </ul>
 </nav>
+
+<!-- JavaScript لتبديل اللغة -->
+<script>
+function switchLanguage(langCode) {
+    // الحصول على المسار الحالي
+    var currentPath = window.location.pathname;
+    
+    // الحصول على الخدمة الحالية (إذا كنا في صفحة خدمة)
+    var serviceSlug = null;
+    var match = currentPath.match(/\/service\/([^\/]+)\//);
+    if (match) {
+        serviceSlug = match[1];
+    }
+    
+    // إذا كنا في صفحة خدمة، نحتاج لإعادة التوجيه إلى الصفحة الرئيسية أولاً
+    // لأن slug العربي لن يعمل في اللغة الإنجليزية
+    if (serviceSlug) {
+        // التوجيه إلى الصفحة الرئيسية باللغة الجديدة
+        var newPath = '/' + langCode + '/';
+        window.location.href = newPath;
+        return;
+    }
+    
+    // إذا كنا في صفحة أخرى غير الخدمة، نغير اللغة فقط
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/i18n/setlang/';
+    
+    var inputLang = document.createElement('input');
+    inputLang.type = 'hidden';
+    inputLang.name = 'language';
+    inputLang.value = langCode;
+    
+    var csrf = document.createElement('input');
+    csrf.type = 'hidden';
+    csrf.name = 'csrfmiddlewaretoken';
+    csrf.value = getCookie('csrftoken');
+    
+    form.appendChild(inputLang);
+    form.appendChild(csrf);
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// دالة لجلب CSRF token من الكوكيز
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>

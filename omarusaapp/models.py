@@ -39,23 +39,50 @@ class Service(TranslatableModel):
         return self.safe_translation_getter('name', 'خدمة')
     
     def save(self, *args, **kwargs):
+        # حفظ الخدمة أولاً
         super().save(*args, **kwargs)
         
-        for lang in ['ar', 'en']:
-            if self.has_translation(lang):
+        # إنشاء slugs تلقائياً لكل لغة
+        self.generate_slugs()
+    
+    def generate_slugs(self):
+        """
+        إنشاء slugs تلقائياً لكل لغة بناءً على الاسم
+        """
+        languages = ['ar', 'en']
+        
+        for lang in languages:
+            try:
+                # محاولة جلب الترجمة
                 translation = self.translations.get(language_code=lang)
-                if not translation.slug and translation.name:
-                    base_slug = slugify(translation.name, allow_unicode=True)
-                    unique_slug = base_slug
-                    counter = 1
-                    while Service.objects.filter(
-                        translations__slug=unique_slug,
-                        translations__language_code=lang
-                    ).exclude(id=self.id).exists():
-                        unique_slug = f"{base_slug}-{counter}"
-                        counter += 1
-                    translation.slug = unique_slug
-                    translation.save()
+            except Exception:
+                # إذا لم توجد الترجمة، تخطي
+                continue
+            
+            # إذا كان الاسم موجود و slug فارغ
+            if translation.name and not translation.slug:
+                # إنشاء slug من الاسم
+                base_slug = slugify(translation.name, allow_unicode=True)
+                
+                # إذا كان slug فارغاً (مثلاً اسم غير عربي أو إنجليزي)
+                if not base_slug:
+                    # استخدم ID الخدمة كـ slug مؤقت
+                    base_slug = f'service-{self.id}'
+                
+                # التأكد من uniqueness
+                unique_slug = base_slug
+                counter = 1
+                
+                while Service.objects.filter(
+                    translations__slug=unique_slug,
+                    translations__language_code=lang
+                ).exclude(id=self.id).exists():
+                    unique_slug = f"{base_slug}-{counter}"
+                    counter += 1
+                
+                # حفظ slug
+                translation.slug = unique_slug
+                translation.save()
 
 
 class About(TranslatableModel):
@@ -99,7 +126,6 @@ class SiteSetting(TranslatableModel):
     instagram_url = models.URLField(verbose_name='رابط انستغرام', blank=True, null=True)
     twitter_url = models.URLField(verbose_name='رابط تويتر', blank=True, null=True)
     
-    # حقل الواتساب الجديد
     whatsapp_number = models.CharField(
         max_length=20, 
         verbose_name='رقم واتساب (مع رمز الدولة)', 
@@ -108,13 +134,26 @@ class SiteSetting(TranslatableModel):
         help_text="اتركه فارغاً لإخفاء الأيقونة. مثال للصيغة: 193318181"
     )
 
-    # حقول إعدادات البريد الإلكتروني (SMTP)
     email_host = models.CharField(max_length=255, verbose_name='خادم البريد (SMTP Host)', blank=True, null=True, help_text="مثال: smtp-relay.brevo.com")
     email_port = models.IntegerField(default=587, verbose_name='بورت البريد (Port)', help_text="غالباً 465 لـ SSL أو 587 لـ TLS")
     email_use_ssl = models.BooleanField(default=False, verbose_name='استخدام SSL (للبورت 465)')
     email_host_user = models.CharField(max_length=255, verbose_name='بريد المرسل (Email User)', blank=True, null=True)
     email_host_password = models.CharField(max_length=255, verbose_name='كلمة مرور البريد', blank=True, null=True)
     admin_receive_email = models.EmailField(verbose_name='بريد استقبال الرسائل', blank=True, null=True, help_text="البريد الذي ستصلك إليه رسائل العملاء")
+
+    # حقول النصوص الثابتة
+    menu_title = models.CharField(max_length=50, verbose_name='عنوان القائمة', default='Menu', blank=True)
+    home_link = models.CharField(max_length=50, verbose_name='نص رابط الرئيسية', default='Home', blank=True)
+    about_link = models.CharField(max_length=50, verbose_name='نص رابط من نحن', default='About', blank=True)
+    
+    footer_get_in_touch = models.CharField(max_length=50, verbose_name='عنوان قسم التواصل', default='GET IN TOUCH', blank=True)
+    footer_follow = models.CharField(max_length=50, verbose_name='عنوان قسم المتابعة', default='FOLLOW', blank=True)
+    footer_send_message = models.CharField(max_length=50, verbose_name='عنوان نموذج الرسالة', default='SEND MESSAGE', blank=True)
+    footer_name_placeholder = models.CharField(max_length=50, verbose_name='نص placeholder الاسم', default='الاسم', blank=True)
+    footer_email_placeholder = models.CharField(max_length=50, verbose_name='نص placeholder البريد', default='البريد الإلكتروني', blank=True)
+    footer_message_placeholder = models.CharField(max_length=50, verbose_name='نص placeholder الرسالة', default='الرسالة', blank=True)
+    footer_submit_btn = models.CharField(max_length=50, verbose_name='نص زر الإرسال', default='إرسال', blank=True)
+    footer_success_msg = models.CharField(max_length=200, verbose_name='رسالة النجاح', default='✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.', blank=True)
 
     translations = TranslatedFields(
         company_name=models.CharField(max_length=200, verbose_name='اسم الشركة', default='Clear Document Preparation LLC'),
@@ -133,3 +172,15 @@ class SiteSetting(TranslatableModel):
 
     def __str__(self):
         return 'إعدادات الموقع'
+
+
+# إشارة لتوليد slug تلقائياً بعد الحفظ
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=Service)
+def generate_slug_on_save(sender, instance, created, **kwargs):
+    """
+    إشارة لتوليد slug تلقائياً بعد حفظ الخدمة
+    """
+    instance.generate_slugs()

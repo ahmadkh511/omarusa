@@ -18,22 +18,18 @@
     .hero-banner {
         position: relative;
         width: 100%;
-        height: 250px; /* تم تقليل الارتفاع ليناسب الخدمة */
+        height: 250px;
         border-radius: 12px;
         overflow: hidden;
         margin-bottom: 40px;
-        
-        /* نيون خلفي خفيف دائم */
         box-shadow: 0 10px 25px rgba(0,0,0,0.1), 
                     0 0 15px rgba(0, 242, 255, 0.2), 
                     0 0 30px rgba(0, 180, 216, 0.1);
-        
         transition: box-shadow 0.4s ease, transform 0.4s ease;
     }
 
     .hero-banner:hover {
         transform: translateY(-5px);
-        /* زيادة خفيفة جداً في التوهج عند المرور */
         box-shadow: 0 15px 35px rgba(0,0,0,0.15), 
                     0 0 25px rgba(0, 242, 255, 0.4), 
                     0 0 50px rgba(0, 180, 216, 0.2);
@@ -43,7 +39,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.85); /* تعتيم خفيف جداً لبروز النص */
+        filter: brightness(0.85);
         transition: transform 0.5s ease;
     }
 
@@ -51,7 +47,6 @@
         transform: scale(1.03);
     }
 
-    /* وضع النص فوق البانر */
     .banner-overlay {
         position: absolute;
         bottom: 0;
@@ -67,7 +62,7 @@
 
     .banner-overlay h1 {
         color: white;
-        font-size: 2.2em; /* حجم أصغر للعنوان ليناسب الارتفاع الجديد */
+        font-size: 2.2em;
         font-weight: 800;
         margin: 0;
         text-shadow: 0 4px 10px rgba(0,0,0,0.5);
@@ -83,11 +78,10 @@
         width: 80px;
         height: 4px;
         background: var(--turquoise);
-        box-shadow: 0 0 8px var(--neon); /* نيون خفيف تحت العنوان */
+        box-shadow: 0 0 8px var(--neon);
         border-radius: 2px;
     }
 
-    /* === محتوى النص === */
     .service-content-modern {
         max-width: 900px;
         margin: 0 auto;
@@ -109,7 +103,6 @@
         margin-top: 30px;
     }
 
-    /* === زر العودة === */
     .back-btn-container {
         text-align: center;
         margin-top: 50px;
@@ -133,7 +126,6 @@
         transform: translateY(-3px);
     }
 
-    /* تصميم البانر في حال عدم وجود صورة */
     .no-banner {
         height: 200px;
         background: linear-gradient(135deg, #1a1a1a, #333);
@@ -159,7 +151,6 @@
             </div>
         </div>
     {% else %}
-        <!-- في حال لم تكن هناك صورة متاحة -->
         <div class="no-banner">
             📄
         </div>
