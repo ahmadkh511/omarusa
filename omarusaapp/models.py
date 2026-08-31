@@ -3,21 +3,8 @@ from django.utils.text import slugify
 from parler.models import TranslatableModel, TranslatedFields
 
 class Service(TranslatableModel):
-    """
-    نموذج الخدمات - قابل للترجمة
-    """
-    thumbnail = models.ImageField(
-        upload_to='services/thumbnails/',
-        verbose_name='الصورة المصغرة',
-        blank=True,
-        null=True
-    )
-    main_image = models.ImageField(
-        upload_to='services/main/',
-        verbose_name='الصورة الرئيسية',
-        blank=True,
-        null=True
-    )
+    thumbnail = models.ImageField(upload_to='services/thumbnails/', verbose_name='الصورة المصغرة', blank=True, null=True)
+    main_image = models.ImageField(upload_to='services/main/', verbose_name='الصورة الرئيسية', blank=True, null=True)
     is_active = models.BooleanField(default=True, verbose_name='مفعل')
     order = models.IntegerField(default=0, verbose_name='ترتيب العرض')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -39,40 +26,25 @@ class Service(TranslatableModel):
         return self.safe_translation_getter('name', 'خدمة')
     
     def save(self, *args, **kwargs):
-        # حفظ الخدمة أولاً
+        # حفظ الخدمة أولاً ثم توليد الـ slug (الاكتفاء بهذه الطريقة فقط)
         super().save(*args, **kwargs)
-        
-        # إنشاء slugs تلقائياً لكل لغة
         self.generate_slugs()
     
     def generate_slugs(self):
-        """
-        إنشاء slugs تلقائياً لكل لغة بناءً على الاسم
-        """
         languages = ['ar', 'en']
-        
         for lang in languages:
             try:
-                # محاولة جلب الترجمة
                 translation = self.translations.get(language_code=lang)
             except Exception:
-                # إذا لم توجد الترجمة، تخطي
                 continue
             
-            # إذا كان الاسم موجود و slug فارغ
             if translation.name and not translation.slug:
-                # إنشاء slug من الاسم
                 base_slug = slugify(translation.name, allow_unicode=True)
-                
-                # إذا كان slug فارغاً (مثلاً اسم غير عربي أو إنجليزي)
                 if not base_slug:
-                    # استخدم ID الخدمة كـ slug مؤقت
                     base_slug = f'service-{self.id}'
                 
-                # التأكد من uniqueness
                 unique_slug = base_slug
                 counter = 1
-                
                 while Service.objects.filter(
                     translations__slug=unique_slug,
                     translations__language_code=lang
@@ -80,10 +52,8 @@ class Service(TranslatableModel):
                     unique_slug = f"{base_slug}-{counter}"
                     counter += 1
                 
-                # حفظ slug
                 translation.slug = unique_slug
                 translation.save()
-
 
 class About(TranslatableModel):
     image = models.ImageField(upload_to='about/', blank=True, null=True)
@@ -101,7 +71,6 @@ class About(TranslatableModel):
     def __str__(self):
         return self.safe_translation_getter('title', 'من نحن')
 
-
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100, verbose_name='الاسم')
     email = models.EmailField(verbose_name='البريد الإلكتروني')
@@ -117,7 +86,6 @@ class ContactMessage(models.Model):
     def __str__(self):
         return f'رسالة من {self.name}'
 
-
 class SiteSetting(TranslatableModel):
     logo = models.ImageField(upload_to='site/', verbose_name='شعار الشركة', blank=True, null=True)
     phone = models.CharField(max_length=20, verbose_name='رقم الهاتف', blank=True, null=True)
@@ -126,13 +94,7 @@ class SiteSetting(TranslatableModel):
     instagram_url = models.URLField(verbose_name='رابط انستغرام', blank=True, null=True)
     twitter_url = models.URLField(verbose_name='رابط تويتر', blank=True, null=True)
     
-    whatsapp_number = models.CharField(
-        max_length=20, 
-        verbose_name='رقم واتساب (مع رمز الدولة)', 
-        blank=True, 
-        null=True, 
-        help_text="اتركه فارغاً لإخفاء الأيقونة. مثال للصيغة: 193318181"
-    )
+    whatsapp_number = models.CharField(max_length=20, verbose_name='رقم واتساب (مع رمز الدولة)', blank=True, null=True, help_text="اتركه فارغاً لإخفاء الأيقونة. مثال للصيغة: 193318181")
 
     email_host = models.CharField(max_length=255, verbose_name='خادم البريد (SMTP Host)', blank=True, null=True, help_text="مثال: smtp-relay.brevo.com")
     email_port = models.IntegerField(default=587, verbose_name='بورت البريد (Port)', help_text="غالباً 465 لـ SSL أو 587 لـ TLS")
@@ -141,7 +103,6 @@ class SiteSetting(TranslatableModel):
     email_host_password = models.CharField(max_length=255, verbose_name='كلمة مرور البريد', blank=True, null=True)
     admin_receive_email = models.EmailField(verbose_name='بريد استقبال الرسائل', blank=True, null=True, help_text="البريد الذي ستصلك إليه رسائل العملاء")
 
-    # حقول النصوص الثابتة
     menu_title = models.CharField(max_length=50, verbose_name='عنوان القائمة', default='Menu', blank=True)
     home_link = models.CharField(max_length=50, verbose_name='نص رابط الرئيسية', default='Home', blank=True)
     about_link = models.CharField(max_length=50, verbose_name='نص رابط من نحن', default='About', blank=True)
@@ -159,11 +120,7 @@ class SiteSetting(TranslatableModel):
         company_name=models.CharField(max_length=200, verbose_name='اسم الشركة', default='Clear Document Preparation LLC'),
         welcome_text=models.TextField(verbose_name='النص الترحيبي (الصفحة الرئيسية)', blank=True, null=True),
         address=models.TextField(verbose_name='العنوان', blank=True, null=True),
-        copyright_text=models.CharField(
-            max_length=255, 
-            verbose_name='نص حقوق النشر', 
-            default='© Clear Document Preparation LLC. All rights reserved'
-        ),
+        copyright_text=models.CharField(max_length=255, verbose_name='نص حقوق النشر', default='© Clear Document Preparation LLC. All rights reserved'),
     )
 
     class Meta:
@@ -173,14 +130,4 @@ class SiteSetting(TranslatableModel):
     def __str__(self):
         return 'إعدادات الموقع'
 
-
-# إشارة لتوليد slug تلقائياً بعد الحفظ
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
-@receiver(post_save, sender=Service)
-def generate_slug_on_save(sender, instance, created, **kwargs):
-    """
-    إشارة لتوليد slug تلقائياً بعد حفظ الخدمة
-    """
-    instance.generate_slugs()
+# تم إزالة إشارة post_save نهائياً

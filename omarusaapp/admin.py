@@ -1,10 +1,61 @@
 from django.contrib import admin
+from django.core.exceptions import PermissionDenied
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import render
+from django.utils.translation import gettext as _
+from django.utils.html import escape
 from parler.admin import TranslatableAdmin
 from .models import Service, About, SiteSetting, ContactMessage
 
 class CustomTranslatableAdmin(TranslatableAdmin):
-    # إضافة هذا المتغير لحل مشكلة delete_confirmation_max_display
-    delete_confirmation_max_display = 100
+    # تجاوز دالة حذف الترجمة لحل مشكلة Django 5.1+
+    def delete_translation(self, request, object_id, language_code):
+        opts = self.model._meta
+        app_label = opts.app_label
+
+        try:
+            obj = self.get_queryset(request).get(pk=object_id)
+        except self.model.DoesNotExist:
+            obj = None
+
+        if not self.has_change_permission(request, obj):
+            raise PermissionDenied
+
+        if obj is None:
+            raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': opts.object_name, 'key': escape(object_id)})
+
+        try:
+            translation = obj.translations.get(language_code=language_code)
+        except obj.translations.model.DoesNotExist:
+            raise Http404("No such translation")
+
+        if request.POST:
+            obj.delete_translation(language_code)
+            self.message_user(request, _('The %(name)s "%(obj)s" was deleted successfully.') % {
+                'name': opts.verbose_name,
+                'obj': str(translation)
+            })
+            return HttpResponseRedirect("../../")
+
+        context = {
+            **self.admin_site.each_context(request),
+            'title': _('Are you sure?'),
+            'object_name': opts.verbose_name,
+            'object': translation,
+            'deleted_objects': [str(translation)],
+            'perms_lacking': set(),
+            'protected': [],
+            'opts': opts,
+            'app_label': app_label,
+            'delete_confirmation_max_display': 100,  # المتغير الناقص الذي سبب الخطأ
+        }
+
+        request.current_app = self.admin_site.name
+        return render(request, self.delete_translation_confirmation_template or [
+            "admin/%s/%s/delete_translation_confirmation.html" % (app_label, opts.model_name),
+            "admin/%s/delete_translation_confirmation.html" % app_label,
+            "admin/delete_translation_confirmation.html"
+        ], context)
 
 @admin.register(Service)
 class ServiceAdmin(CustomTranslatableAdmin):
@@ -30,7 +81,6 @@ class ServiceAdmin(CustomTranslatableAdmin):
     
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        # إخفاء حقل slug من النموذج
         if 'slug' in form.base_fields:
             form.base_fields['slug'].widget = admin.widgets.AdminTextInputWidget(
                 attrs={'readonly': 'readonly', 'style': 'display:none;'}
@@ -41,23 +91,21 @@ class ServiceAdmin(CustomTranslatableAdmin):
 @admin.register(About)
 class AboutAdmin(CustomTranslatableAdmin):
     list_display = ['title', 'updated_at']
-    
     fieldsets = (
-        ('الصورة', {
-            'fields': ('image',)
-        }),
-        ('الترجمة', {
-            'fields': ('title', 'content')
-        }),
+        ('الصورة', {'fields': ('image',)}),
+        ('الترجمة', {'fields': ('title', 'content')}),
     )
 
 @admin.register(SiteSetting)
 class SiteSettingAdmin(CustomTranslatableAdmin):
     list_display = ['company_name', 'phone', 'email']
     
+    def has_add_permission(self, request):
+        return not SiteSetting.objects.exists()
+
     fieldsets = (
         ('معلومات الشركة', {
-            'fields': ('logo', 'company_name', 'phone', 'email', 'address', 'copyright_text')
+            'fields': ('logo', 'company_name', 'phone', 'email', 'address', 'welcome_text', 'copyright_text')
         }),
         ('وسائل التواصل', {
             'fields': ('facebook_url', 'instagram_url', 'twitter_url', 'whatsapp_number')
