@@ -1,16 +1,20 @@
 import os
 from pathlib import Path
+import dj_database_url  # تمت إضافته لدعم قاعدة بيانات Render
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-your-secret-key-here'
+# تم تعديله ليأخذ المفتاح من البيئة (Render) أو يستخدم الافتراضي محلياً
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# تم تعديله ليكون False تلقائياً على Render، و True في جهازك
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+# السماح بالاتصال من localhost ومن رابط Render
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
 
 # Application definition
 INSTALLED_APPS = [
@@ -30,6 +34,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # تمت إضافته لخدمة الملفات الثابتة على Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',  # لدعم الترجمة
     'django.middleware.common.CommonMiddleware',
@@ -55,7 +60,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'omarusaapp.context_processors.global_settings',
-                'omarusaapp.context_processors.language_context',  # أضف هذا
+                'omarusaapp.context_processors.language_context',
             ],
         },
     },
@@ -64,11 +69,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'omarproject.wsgi.application'
 
 # Database
+# تم تعديله ليقرأ رابط قاعدة بيانات PostgreSQL من Render، ويستخدم SQLite محلياً
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite55',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+        conn_max_age=600
+    )
 }
 
 # Password validation
@@ -107,6 +113,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+# إعداد تخزين الملفات لتعمل بكفاءة على Render
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Media files (User uploaded files)
 MEDIA_URL = '/media/'
@@ -128,6 +147,3 @@ PARLER_LANGUAGES = {
 }
 
 PARLER_DEFAULT_LANGUAGE_CODE = 'ar'
-
-
-
