@@ -7,11 +7,12 @@ def global_settings(request):
     يجلب الخدمات المفعلة وإعدادات الموقع (الهيدر والفوتر)
     ويجعلها متاحة في جميع قوالب الموقع.
     """
-    # جلب أول سجل من إعدادات الموقع (لأننا نستخدم نمط Singleton)
-    site_settings = SiteSetting.objects.first()
+    # إصلاح: استخدام get_solo لضمان إرجاع سجل الإعدادات دائماً وعدم يكون None
+    site_settings = SiteSetting.objects.get_solo()
     
     return {
-        'menu_services': Service.objects.filter(is_active=True).order_by('order'),
+        # إصلاح: استخدام _default_manager لجلب جميع الخدمات للقائمة العلوية بغض النظر عن الترجمة
+        'menu_services': Service._default_manager.filter(is_active=True).order_by('order'),
         'site_settings': site_settings
     }
 
@@ -33,7 +34,3 @@ def language_context(request):
         'current_language': current_language,
         'languages': languages,
     }
-
-
-
-    

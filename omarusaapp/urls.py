@@ -16,6 +16,5 @@ urlpatterns = [
     # صفحة التواصل
     path('contact/', views.contact_view, name='contact_view'),
 
-    # لوحة التحكم
-    path('dashboard/', views.dashboard, name='dashboard'),
+    
 ]

@@ -163,20 +163,19 @@
 <!-- عرض الخدمات -->
 <section class="neon-tiles">
     {% for service in services %}
-        {% if service.slug %}
-            <a href="{% url 'omarusaapp:service_detail' slug=service.slug %}" class="neon-card">
-                {% if service.thumbnail and service.thumbnail.url %}
-                    <img src="{{ service.thumbnail.url }}" alt="{{ service.name }}" />
-                {% else %}
-                    <div class="no-image-neon">📷</div>
-                {% endif %}
-                
-                <div class="neon-overlay">
-                    <h2>{{ service.name }}</h2>
-                    <p>{{ service.short_description|default:"خدمة متاحة" }}</p>
-                </div>
-            </a>
-        {% endif %}
+        <!-- إصلاح: استخدام service.id كخيار بديل للرابط إذا لم يوجد slug في هذه اللغة -->
+        <a href="{% url 'omarusaapp:service_detail' slug=service.slug|default:service.id %}" class="neon-card">
+            {% if service.thumbnail and service.thumbnail.url %}
+                <img src="{{ service.thumbnail.url }}" alt="{{ service.name }}" />
+            {% else %}
+                <div class="no-image-neon">📷</div>
+            {% endif %}
+            
+            <div class="neon-overlay">
+                <h2>{{ service.name|default:"خدمة" }}</h2>
+                <p>{{ service.short_description|default:"خدمة متاحة" }}</p>
+            </div>
+        </a>
     {% empty %}
         <div class="empty-state">
             <h3>🚫 لا توجد خدمات متاحة حالياً</h3>
