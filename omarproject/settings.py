@@ -117,13 +117,13 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# إعداد تخزين الملفات لتعمل بكفاءة على Render
+# إعداد تخزين الملفات لتعمل بكفاءة على Render (تم إزالة Manifest لحل مشكلة القائمة)
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
