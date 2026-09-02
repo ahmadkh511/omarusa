@@ -4,7 +4,6 @@
     /* استدعاء خط Poppins العصري من جوجل */
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap');
 
-    /* إزالة الهامش العلوي الكبير وتقليل المسافة */
     #header {
         padding-top: 10px !important; 
         padding-bottom: 10px !important;
@@ -17,7 +16,6 @@
         justify-content: space-between;
     }
 
-    /* تكبير صورة الشعار */
     #header .logo .symbol img {
         height: 60px !important; 
         width: auto !important;
@@ -43,7 +41,6 @@
         text-decoration: none;
     }
 
-    /* نمط اسم الشركة */
     #header .logo .title {
         font-family: 'Poppins', sans-serif !important;
         font-size: 1.4em !important;
@@ -67,14 +64,28 @@
     }
 
     /* ============================================
-       تصميم القائمة الجانبية (الجديد)
+       تصميم القائمة الجانبية (المنزلقة)
        ============================================ */
     #menu {
         background: #0f172a !important;
         box-shadow: -10px 0 40px rgba(0,0,0,0.5) !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: -350px !important; /* مخفية افتراضياً */
+        width: 300px !important;
+        height: 100vh !important;
+        overflow-y: auto !important;
+        transition: left 0.3s ease !important;
+        z-index: 10002 !important;
     }
+    /* إظهار القائمة عند إضافة الكلاس للجسم */
+    body.menu-active #menu {
+        left: 0 !important;
+    }
+    
     #menu .inner {
         padding: 40px 30px !important;
+        position: relative !important;
     }
     #menu h2 {
         color: #ffffff !important;
@@ -114,20 +125,37 @@
         box-shadow: 0 0 15px rgba(0, 242, 255, 0.1) !important;
     }
     
-    /* زر الإغلاق (Close) في القائمة */
-    #menu .close {
-        color: #8898aa !important;
-        transition: all 0.3s ease !important;
+    /* زر الإغلاق (X) في القائمة */
+    #menu .close-btn {
         position: absolute !important;
         top: 20px !important;
         right: 20px !important;
-        font-size: 1.5em !important;
+        color: #8898aa !important;
+        font-size: 2em !important;
         text-decoration: none !important;
         cursor: pointer;
+        transition: all 0.3s ease !important;
+        background: none;
+        border: none;
     }
-    #menu .close:hover {
+    #menu .close-btn:hover {
         color: #00f2ff !important;
         text-shadow: 0 0 8px #00b4d8 !important;
+    }
+
+    /* خلفية معتمة عند فتح القائمة */
+    .menu-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 10001;
+    }
+    body.menu-active .menu-overlay {
+        display: block;
     }
 
     /* ============================================
@@ -167,12 +195,15 @@
         align-items: center;
         gap: 10px;
     }
+    .menu-toggle-btn {
+        cursor: pointer;
+        font-weight: 600;
+    }
 </style>
 
 <!-- Header -->
 <header id="header" style="display: block !important;">
     <div class="inner">
-        <!-- Logo -->
         <a href="{% url 'omarusaapp:index' %}" class="logo">
             <span class="symbol">
                 {% if site_settings.logo %}
@@ -184,9 +215,7 @@
             <span class="title">{% if site_settings %}{{ site_settings.company_name }}{% else %}Clear Document Preparation LLC{% endif %}</span>
         </a>
 
-        <!-- Nav with Language Switcher -->
         <div class="nav-links">
-            <!-- Language Switcher -->
             <div class="language-switcher">
                 {% for lang in languages %}
                     <a href="#" 
@@ -198,54 +227,57 @@
                 {% endfor %}
             </div>
 
-            <!-- Menu Toggle -->
+            <!-- زر فتح القائمة -->
             <nav>
                 <ul>
-                    <li><a href="#menu">{{ site_settings.menu_title|default:"Menu" }}</a></li>
+                    <li><a href="#" class="menu-toggle-btn" onclick="toggleMenu()">{{ site_settings.menu_title|default:"Menu" }}</a></li>
                 </ul>
             </nav>
         </div>
     </div>
 </header>
 
-<!-- Menu (القائمة الجانبية) -->
+<!-- خلفية معتمة -->
+<div class="menu-overlay" onclick="toggleMenu()"></div>
+
+<!-- القائمة الجانبية -->
 <nav id="menu">
-    <a href="#menu" class="close">&times;</a>
-    <h2>{{ site_settings.menu_title|default:"Menu" }}</h2>
-    <ul>
-        <li><a href="{% url 'omarusaapp:index' %}">{{ site_settings.home_link|default:"Home" }}</a></li>
-        {% for service in menu_services %}
-            {% if service.slug %}
-                <li><a href="{% url 'omarusaapp:service_detail' slug=service.slug %}">{{ service.name }}</a></li>
-            {% endif %}
-        {% endfor %}
-        <li><a href="{% url 'omarusaapp:about' %}">{{ site_settings.about_link|default:"About" }}</a></li>
-    </ul>
+    <div class="inner">
+        <button class="close-btn" onclick="toggleMenu()">&times;</button>
+        <h2>{{ site_settings.menu_title|default:"Menu" }}</h2>
+        <ul>
+            <li><a href="{% url 'omarusaapp:index' %}" onclick="toggleMenu()">{{ site_settings.home_link|default:"Home" }}</a></li>
+            {% for service in menu_services %}
+                {% if service.slug %}
+                    <li><a href="{% url 'omarusaapp:service_detail' slug=service.slug %}" onclick="toggleMenu()">{{ service.name }}</a></li>
+                {% endif %}
+            {% endfor %}
+            <li><a href="{% url 'omarusaapp:about' %}" onclick="toggleMenu()">{{ site_settings.about_link|default:"About" }}</a></li>
+        </ul>
+    </div>
 </nav>
 
-<!-- JavaScript لتبديل اللغة -->
+<script>
+function toggleMenu() {
+    document.body.classList.toggle('menu-active');
+}
+</script>
+
 <script>
 function switchLanguage(langCode) {
-    // الحصول على المسار الحالي
     var currentPath = window.location.pathname;
-    
-    // الحصول على الخدمة الحالية (إذا كنا في صفحة خدمة)
     var serviceSlug = null;
     var match = currentPath.match(/\/service\/([^\/]+)\//);
     if (match) {
         serviceSlug = match[1];
     }
     
-    // إذا كنا في صفحة خدمة، نحتاج لإعادة التوجيه إلى الصفحة الرئيسية أولاً
-    // لأن slug العربي لن يعمل في اللغة الإنجليزية
     if (serviceSlug) {
-        // التوجيه إلى الصفحة الرئيسية باللغة الجديدة
         var newPath = '/' + langCode + '/';
         window.location.href = newPath;
         return;
     }
     
-    // إذا كنا في صفحة أخرى غير الخدمة، نغير اللغة فقط
     var form = document.createElement('form');
     form.method = 'POST';
     form.action = '/i18n/setlang/';
@@ -266,7 +298,6 @@ function switchLanguage(langCode) {
     form.submit();
 }
 
-// دالة لجلب CSRF token من الكوكيز
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -281,26 +312,4 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-</script>
-
-<!-- JavaScript إضافي لضمان عمل زر القائمة في بيئة الإنتاج -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const body = document.body;
-    const menuLink = document.querySelector('header a[href="#menu"]');
-    const closeLink = document.querySelector('#menu .close');
-    
-    if (menuLink) {
-        menuLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            body.classList.toggle('is-menu-visible');
-        });
-    }
-    if (closeLink) {
-        closeLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            body.classList.remove('is-menu-visible');
-        });
-    }
-});
 </script>
