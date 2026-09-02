@@ -150,3 +150,7 @@ def dashboard(request):
 
     context = {'settings': settings}
     return render(request, 'omarusaapp/dashboard.html', context)
+
+
+
+    

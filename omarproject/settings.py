@@ -67,7 +67,7 @@ WSGI_APPLICATION = 'omarproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite30',
+        'NAME': BASE_DIR / 'db.sqlite70',
     }
 }
 
@@ -88,7 +88,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'ar'
 
 LANGUAGES = [
     ('ar', 'العربية'),
@@ -122,9 +122,12 @@ PARLER_LANGUAGES = {
         {'code': 'en'},
     ),
     'default': {
-        'fallback': 'ar',
+        'fallback': 'en',
         'hide_untranslated': False,
     }
 }
 
 PARLER_DEFAULT_LANGUAGE_CODE = 'ar'
+
+
+

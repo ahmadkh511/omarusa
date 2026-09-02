@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from parler.models import TranslatableModel, TranslatedFields
+from parler.managers import TranslatableManager
 
 class Service(TranslatableModel):
     thumbnail = models.ImageField(upload_to='services/thumbnails/', verbose_name='الصورة المصغرة', blank=True, null=True)
@@ -23,19 +24,20 @@ class Service(TranslatableModel):
         verbose_name_plural = 'الخدمات'
     
     def __str__(self):
-        return self.safe_translation_getter('name', 'خدمة')
+        return self.safe_translation_getter('name', 'خدمة') or 'خدمة'
     
     def save(self, *args, **kwargs):
-        # حفظ الخدمة أولاً ثم توليد الـ slug (الاكتفاء بهذه الطريقة فقط)
+        is_new = self._state.adding
         super().save(*args, **kwargs)
-        self.generate_slugs()
+        if is_new or self.translations.filter(slug__isnull=True).exists() or self.translations.filter(slug__exact='').exists():
+            self.generate_slugs()
     
     def generate_slugs(self):
         languages = ['ar', 'en']
         for lang in languages:
             try:
                 translation = self.translations.get(language_code=lang)
-            except Exception:
+            except self.translations.model.DoesNotExist:
                 continue
             
             if translation.name and not translation.slug:
@@ -55,6 +57,7 @@ class Service(TranslatableModel):
                 translation.slug = unique_slug
                 translation.save()
 
+
 class About(TranslatableModel):
     image = models.ImageField(upload_to='about/', blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -69,7 +72,7 @@ class About(TranslatableModel):
         verbose_name_plural = 'من نحن'
     
     def __str__(self):
-        return self.safe_translation_getter('title', 'من نحن')
+        return self.safe_translation_getter('title', 'من نحن') or 'من نحن'
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100, verbose_name='الاسم')
@@ -85,6 +88,15 @@ class ContactMessage(models.Model):
     
     def __str__(self):
         return f'رسالة من {self.name}'
+
+
+class SiteSettingManager(TranslatableManager):
+    """مدير مخصص لضمان وجود سجل واحد فقط (Singleton Pattern)"""
+    def get_solo(self):
+        instance = self.first()
+        if instance is None:
+            instance = self.create()
+        return instance
 
 class SiteSetting(TranslatableModel):
     logo = models.ImageField(upload_to='site/', verbose_name='شعار الشركة', blank=True, null=True)
@@ -103,25 +115,31 @@ class SiteSetting(TranslatableModel):
     email_host_password = models.CharField(max_length=255, verbose_name='كلمة مرور البريد', blank=True, null=True)
     admin_receive_email = models.EmailField(verbose_name='بريد استقبال الرسائل', blank=True, null=True, help_text="البريد الذي ستصلك إليه رسائل العملاء")
 
-    menu_title = models.CharField(max_length=50, verbose_name='عنوان القائمة', default='Menu', blank=True)
-    home_link = models.CharField(max_length=50, verbose_name='نص رابط الرئيسية', default='Home', blank=True)
-    about_link = models.CharField(max_length=50, verbose_name='نص رابط من نحن', default='About', blank=True)
-    
-    footer_get_in_touch = models.CharField(max_length=50, verbose_name='عنوان قسم التواصل', default='GET IN TOUCH', blank=True)
-    footer_follow = models.CharField(max_length=50, verbose_name='عنوان قسم المتابعة', default='FOLLOW', blank=True)
-    footer_send_message = models.CharField(max_length=50, verbose_name='عنوان نموذج الرسالة', default='SEND MESSAGE', blank=True)
-    footer_name_placeholder = models.CharField(max_length=50, verbose_name='نص placeholder الاسم', default='الاسم', blank=True)
-    footer_email_placeholder = models.CharField(max_length=50, verbose_name='نص placeholder البريد', default='البريد الإلكتروني', blank=True)
-    footer_message_placeholder = models.CharField(max_length=50, verbose_name='نص placeholder الرسالة', default='الرسالة', blank=True)
-    footer_submit_btn = models.CharField(max_length=50, verbose_name='نص زر الإرسال', default='إرسال', blank=True)
-    footer_success_msg = models.CharField(max_length=200, verbose_name='رسالة النجاح', default='✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.', blank=True)
+    # الحقول الثابتة (غير المترجمة) تبقى هنا
+    # لاحظ أنه تم نقل حقول القائمة والفوتر للأسفل
 
     translations = TranslatedFields(
         company_name=models.CharField(max_length=200, verbose_name='اسم الشركة', default='Clear Document Preparation LLC'),
         welcome_text=models.TextField(verbose_name='النص الترحيبي (الصفحة الرئيسية)', blank=True, null=True),
         address=models.TextField(verbose_name='العنوان', blank=True, null=True),
         copyright_text=models.CharField(max_length=255, verbose_name='نص حقوق النشر', default='© Clear Document Preparation LLC. All rights reserved'),
+        
+        # تم نقل نصوص القائمة والفوتر هنا لتصبح مترجمة
+        menu_title=models.CharField(max_length=50, verbose_name='عنوان القائمة', default='Menu', blank=True),
+        home_link=models.CharField(max_length=50, verbose_name='نص رابط الرئيسية', default='Home', blank=True),
+        about_link=models.CharField(max_length=50, verbose_name='نص رابط من نحن', default='About', blank=True),
+        
+        footer_get_in_touch=models.CharField(max_length=50, verbose_name='عنوان قسم التواصل', default='GET IN TOUCH', blank=True),
+        footer_follow=models.CharField(max_length=50, verbose_name='عنوان قسم المتابعة', default='FOLLOW', blank=True),
+        footer_send_message=models.CharField(max_length=50, verbose_name='عنوان نموذج الرسالة', default='SEND MESSAGE', blank=True),
+        footer_name_placeholder=models.CharField(max_length=50, verbose_name='نص placeholder الاسم', default='الاسم', blank=True),
+        footer_email_placeholder=models.CharField(max_length=50, verbose_name='نص placeholder البريد', default='البريد الإلكتروني', blank=True),
+        footer_message_placeholder=models.CharField(max_length=50, verbose_name='نص placeholder الرسالة', default='الرسالة', blank=True),
+        footer_submit_btn=models.CharField(max_length=50, verbose_name='نص زر الإرسال', default='إرسال', blank=True),
+        footer_success_msg=models.CharField(max_length=200, verbose_name='رسالة النجاح', default='✅ تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.', blank=True),
     )
+
+    objects = SiteSettingManager()
 
     class Meta:
         verbose_name = 'إعداد الموقع'
@@ -129,5 +147,3 @@ class SiteSetting(TranslatableModel):
 
     def __str__(self):
         return 'إعدادات الموقع'
-
-# تم إزالة إشارة post_save نهائياً

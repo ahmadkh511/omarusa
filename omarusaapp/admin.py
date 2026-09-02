@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.utils.html import escape
 from parler.admin import TranslatableAdmin
@@ -47,15 +48,19 @@ class CustomTranslatableAdmin(TranslatableAdmin):
             'protected': [],
             'opts': opts,
             'app_label': app_label,
-            'delete_confirmation_max_display': 100,  # المتغير الناقص الذي سبب الخطأ
+            'delete_confirmation_max_display': 100,
         }
 
         request.current_app = self.admin_site.name
-        return render(request, self.delete_translation_confirmation_template or [
-            "admin/%s/%s/delete_translation_confirmation.html" % (app_label, opts.model_name),
-            "admin/%s/delete_translation_confirmation.html" % app_label,
-            "admin/delete_translation_confirmation.html"
-        ], context)
+        
+        # إصلاح الخطأ: استخدام قالب Django الافتراضي للحذف لتفادي مشكلة TemplateDoesNotExist
+        template = getattr(self, 'delete_translation_confirmation_template', None) or [
+            "admin/%s/%s/delete_confirmation.html" % (app_label, opts.model_name),
+            "admin/%s/delete_confirmation.html" % app_label,
+            "admin/delete_confirmation.html"
+        ]
+        
+        return render(request, template, context)
 
 @admin.register(Service)
 class ServiceAdmin(CustomTranslatableAdmin):
@@ -102,6 +107,12 @@ class SiteSettingAdmin(CustomTranslatableAdmin):
     
     def has_add_permission(self, request):
         return not SiteSetting.objects.exists()
+
+    def changelist_view(self, request, extra_context=None):
+        if SiteSetting.objects.exists():
+            obj = SiteSetting.objects.first()
+            return redirect(reverse('admin:%s_%s_change' % (self.opts.app_label, self.opts.model_name), args=[obj.pk]))
+        return super().changelist_view(request, extra_context)
 
     fieldsets = (
         ('معلومات الشركة', {
