@@ -118,6 +118,12 @@
     #menu .close {
         color: #8898aa !important;
         transition: all 0.3s ease !important;
+        position: absolute !important;
+        top: 20px !important;
+        right: 20px !important;
+        font-size: 1.5em !important;
+        text-decoration: none !important;
+        cursor: pointer;
     }
     #menu .close:hover {
         color: #00f2ff !important;
@@ -204,6 +210,7 @@
 
 <!-- Menu (القائمة الجانبية) -->
 <nav id="menu">
+    <a href="#menu" class="close">&times;</a>
     <h2>{{ site_settings.menu_title|default:"Menu" }}</h2>
     <ul>
         <li><a href="{% url 'omarusaapp:index' %}">{{ site_settings.home_link|default:"Home" }}</a></li>
@@ -274,4 +281,26 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+</script>
+
+<!-- JavaScript إضافي لضمان عمل زر القائمة في بيئة الإنتاج -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const body = document.body;
+    const menuLink = document.querySelector('header a[href="#menu"]');
+    const closeLink = document.querySelector('#menu .close');
+    
+    if (menuLink) {
+        menuLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            body.classList.toggle('is-menu-visible');
+        });
+    }
+    if (closeLink) {
+        closeLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            body.classList.remove('is-menu-visible');
+        });
+    }
+});
 </script>
